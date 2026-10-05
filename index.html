@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard UFBA · Assistente em Administração</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #0a0e17;
+    color: #e0e6f0;
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: #0a0e17; }
+  ::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #2a5a8f; }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    width: 250px;
+    background: linear-gradient(180deg, #0d1421 0%, #111a2e 100%);
+    border-right: 1px solid #1a2a4a;
+    padding: 1.5rem 0;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 100;
+    transition: transform 0.3s;
+  }
+  .sidebar .logo {
+    text-align: center;
+    padding: 0 1rem 1.5rem;
+    border-bottom: 1px solid #1a2a4a;
+    margin-bottom: 1rem;
+  }
+  .sidebar .logo h2 {
+    font-size: 1rem;
+    background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 1px;
+  }
+  .sidebar .logo p { font-size: 0.7rem; color: #5a7a9f; margin-top: 4px; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #8aa4c8;
+    font-size: 0.85rem;
+    border-left: 3px solid transparent;
+  }
+  .nav-item:hover { background: rgba(0, 212, 255, 0.05); color: #c0d8f0; }
+  .nav-item.active {
+    background: rgba(0, 212, 255, 0.08);
+    color: #00d4ff;
+    border-left-color: #00d4ff;
+  }
+  .nav-item .icon { font-size: 1.2rem; width: 24px; text-align: center; }
+
+  /* ===== MAIN ===== */
+  .main {
+    margin-left: 250px;
+    flex: 1;
+    padding: 1.5rem 2rem 3rem;
+    max-width: 1300px;
+  }
+
+  /* ===== CARDS ===== */
+  .card {
+    background: linear-gradient(135deg, #0f172a 0%, #141f38 100%);
+    border: 1px solid #1a2a4a;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #00d4ff, #7b2ff7, #ff2d95);
+    opacity: 0.6;
+  }
+  .card:hover { border-color: #2a4a7a; box-shadow: 0 8px 32px rgba(0, 212, 255, 0.06); }
+  .card h3 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #5a9aff;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ===== DASH GRID ===== */
+  .dash-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .stat-card {
+    background: linear-gradient(135deg, #0f172a, #162240);
+    border: 1px solid #1a2a4a;
+    border-radius: 14px;
+    padding: 1.2rem;
+    text-align: center;
+    transition: all 0.3s;
+  }
+  .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0, 212, 255, 0.1); }
+  .stat-card .value {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .stat-card .label { font-size: 0.72rem; color: #5a7a9f; margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+  .stat-card .sub { font-size: 0.7rem; color: #3a5a7f; margin-top: 2px; }
+
+  /* ===== PROGRESS ===== */
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #0a1220;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #00d4ff, #7b2ff7);
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+  .progress-fill.green { background: linear-gradient(90deg, #00ff88, #00d4ff); }
+  .progress-fill.orange { background: linear-gradient(90deg, #ffaa00, #ff2d95); }
+
+  /* ===== WEEK SELECTOR ===== */
+  .week-selector {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 1.2rem;
+  }
+  .week-btn {
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: 1px solid #1a2a4a;
+    background: #0d1525;
+    color: #8aa4c8;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    font-family: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 100px;
+  }
+  .week-btn:hover { border-color: #00d4ff44; color: #c0d8f0; }
+  .week-btn.active {
+    border-color: #00d4ff;
+    color: #00d4ff;
+    background: rgba(0,212,255,0.08);
+    box-shadow: 0 0 20px rgba(0,212,255,0.15);
+  }
+  .week-btn .wb-label { font-size: 0.85rem; }
+  .week-btn .wb-period { font-size: 0.65rem; color: #5a7a9f; font-weight: 400; }
+  .week-btn .wb-progress {
+    font-size: 0.65rem;
+    color: #3a8f5a;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .week-btn.active .wb-progress { color: #00ff88; }
+
+  /* ===== WEEK HEADER ===== */
+  .week-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #1a2a4a;
+  }
+  .week-header h3 { margin: 0; }
+  .week-header .week-stats {
+    font-size: 0.75rem;
+    color: #8aa4c8;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .week-header .week-stats span strong { color: #00d4ff; }
+
+  /* ===== DAY CARDS ===== */
+  .day-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+  .day-card {
+    background: #0d1525;
+    border: 1px solid #1a2a4a;
+    border-radius: 14px;
+    padding: 1rem;
+    transition: all 0.3s;
+  }
+  .day-card:hover { border-color: #2a4a7a; }
+  .day-card.complete { border-color: #00d4ff55; background: linear-gradient(135deg, #0d1525, #0f1f35); }
+  .day-card .day-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #c0d8f0;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #1a2a4a;
+  }
+  .day-card .day-title .day-progress {
+    font-size: 0.7rem;
+    color: #5a7a9f;
+    font-weight: 400;
+  }
+  .day-card .day-title .day-progress.done { color: #00ff88; font-weight: 700; }
+
+  .session-block {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    background: #0a1220;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    align-items: flex-start;
+    border: 1px solid transparent;
+  }
+  .session-block:hover { background: #101a30; border-color: #2a4a7a; }
+  .session-block.checked { background: linear-gradient(135deg, #0a2a1a, #0d2035); border-color: #00d4ff44; }
+  .session-block.checked .session-label { color: #00ff88; text-decoration: line-through; }
+  .session-block.checked .session-tags .subject-tag { opacity: 0.55; }
+  .session-block input[type="checkbox"] {
+    width: 20px; height: 20px;
+    accent-color: #00d4ff;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .session-content { flex: 1; }
+  .session-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #5a9aff;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .session-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .subject-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.68rem;
+    font-weight: 500;
+  }
+  .tag-port { background: #1a3a5f; color: #6ab0ff; }
+  .tag-info { background: #2a1a4a; color: #b08aff; }
+  .tag-adm { background: #1a4a2a; color: #6aff8a; }
+  .tag-esp { background: #4a2a1a; color: #ffaa6a; }
+  .tag-sim { background: #4a1a2a; color: #ff6a9a; }
+  .tag-rev { background: #3a3a1a; color: #d4d46a; }
+
+  /* ===== WEEK ACTIONS ===== */
+  .week-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  /* ===== NOTES ===== */
+  .week-notes {
+    width: 100%;
+    min-height: 100px;
+    background: #0a1220;
+    border: 1px solid #1a2a4a;
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: #c0d8f0;
+    font-family: inherit;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    resize: vertical;
+    transition: border-color 0.2s;
+  }
+  .week-notes:focus { outline: none; border-color: #00d4ff; }
+  .week-notes::placeholder { color: #3a5a7f; }
+
+  /* ===== BUTTONS ===== */
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .btn-primary { background: linear-gradient(135deg, #00d4ff, #7b2ff7); color: #fff; }
+  .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+  .btn-secondary { background: #1a2a4a; color: #a0b8d8; }
+  .btn-secondary:hover { background: #2a3a5a; }
+  .btn-sm { padding: 6px 12px; font-size: 0.72rem; }
+  .btn-success { background: linear-gradient(135deg, #00ff88, #00d4ff); color: #062018; }
+  .btn-success:hover { opacity: 0.85; }
+
+  /* ===== DISC CARDS (edital) ===== */
+  .disc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+  .disc-card {
+    background: #0d1525;
+    border: 1px solid #1a2a4a;
+    border-radius: 14px;
+    padding: 1.2rem;
+    transition: all 0.3s;
+  }
+  .disc-card:hover { border-color: #00d4ff33; background: #111d33; }
+  .disc-card .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+  }
+  .disc-card .header h4 { font-size: 0.9rem; color: #c0d8f0; }
+  .disc-card .header .badge {
+    font-size: 0.65rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: #1a2a4a;
+    color: #5a9aff;
+    font-weight: 600;
+  }
+  .disc-card .topics { list-style: none; font-size: 0.78rem; color: #7a9abf; }
+  .disc-card .topics li {
+    padding: 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .disc-card .topics li:hover { color: #c0d8f0; }
+  .disc-card .topics li.done { color: #3a8f5a; text-decoration: line-through; }
+  .disc-card .topics li .check {
+    width: 16px; height: 16px;
+    border: 1.5px solid #2a4a7a;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .disc-card .topics li.done .check {
+    background: #00d4ff;
+    border-color: #00d4ff;
+    color: #0a0e17;
+  }
+
+  /* ===== TABS ===== */
+  .tabs { display: flex; gap: 4px; margin-bottom: 1rem; flex-wrap: wrap; }
+  .tab-btn {
+    padding: 8px 18px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #5a7a9f;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    font-family: inherit;
+    border-bottom: 2px solid transparent;
+  }
+  .tab-btn:hover { color: #a0b8d8; }
+  .tab-btn.active { color: #00d4ff; border-bottom-color: #00d4ff; }
+
+  /* ===== INFO BOX ===== */
+  .info-box {
+    background: rgba(0, 212, 255, 0.05);
+    border: 1px solid rgba(0, 212, 255, 0.15);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    font-size: 0.8rem;
+    color: #8aa4c8;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+  .info-box strong { color: #00d4ff; }
+
+  /* ===== SECTIONS ===== */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ===== POMODORO ===== */
+  .pomodoro-box { text-align: center; padding: 1.5rem; }
+  .pomodoro-timer {
+    font-size: 4rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0.5rem 0;
+    letter-spacing: 4px;
+  }
+  .pomodoro-label { font-size: 0.8rem; color: #5a7a9f; text-transform: uppercase; letter-spacing: 2px; }
+  .pomodoro-controls { display: flex; gap: 10px; justify-content: center; margin-top: 1rem; flex-wrap: wrap; }
+
+  /* ===== MUSIC ===== */
+  .music-options { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .music-btn {
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: 1px solid #1a2a4a;
+    background: #0d1525;
+    color: #8aa4c8;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .music-btn:hover { border-color: #00d4ff44; color: #c0d8f0; }
+  .music-btn.active { border-color: #00d4ff; color: #00d4ff; background: rgba(0,212,255,0.06); }
+  #yt-player iframe { border-radius: 12px; }
+
+  /* ===== SIMULADO ===== */
+  .simulado-question {
+    background: #0d1525;
+    border: 1px solid #1a2a4a;
+    border-radius: 12px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .simulado-question .q-text { font-size: 0.85rem; color: #c0d8f0; margin-bottom: 0.8rem; line-height: 1.6; }
+  .simulado-question .q-options { display: flex; flex-direction: column; gap: 6px; }
+  .simulado-question .q-option {
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: #0a1220;
+    border: 1px solid #1a2a4a;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: #a0b8d8;
+    transition: all 0.2s;
+  }
+  .simulado-question .q-option:hover { border-color: #2a4a7a; }
+  .simulado-question .q-option.correct { background: #0a2a1a; border-color: #00d4ff; color: #6aff8a; }
+  .simulado-question .q-option.wrong { background: #2a0a1a; border-color: #ff2d55; color: #ff6a8a; }
+  .simulado-question .q-feedback { margin-top: 8px; font-size: 0.75rem; color: #5a9aff; display: none; }
+  .simulado-question .q-feedback.show { display: block; }
+
+  /* ===== CHECKLIST ===== */
+  .checklist-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 0.8rem;
+    color: #a0b8d8;
+  }
+  .checklist-item:hover { background: rgba(0,212,255,0.04); }
+  .checklist-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: #00d4ff; cursor: pointer; }
+  .checklist-item.checked { color: #3a8f5a; }
+
+  /* ===== MEMORY ===== */
+  .memory-entry {
+    background: #0d1525;
+    border-left: 3px solid #7b2ff7;
+    border-radius: 0 8px 8px 0;
+    padding: 0.8rem 1rem;
+    margin-bottom: 0.6rem;
+    font-size: 0.78rem;
+    color: #8aa4c8;
+  }
+  .memory-entry .timestamp { font-size: 0.65rem; color: #3a5a7f; }
+
+  /* ===== TOAST ===== */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: linear-gradient(135deg, #0f172a, #1a2a4a);
+    border: 1px solid #00d4ff44;
+    border-radius: 12px;
+    padding: 14px 22px;
+    color: #c0d8f0;
+    font-size: 0.82rem;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    z-index: 9999;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    text-align: center;
+    padding: 2rem 0 1rem;
+    font-size: 0.7rem;
+    color: #3a5a7f;
+    border-top: 1px solid #1a2a4a;
+    margin-top: 2rem;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); width: 230px; }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; padding: 1rem; }
+    .dash-grid { grid-template-columns: repeat(2, 1fr); }
+    .pomodoro-timer { font-size: 2.8rem; }
+    .day-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<nav class="sidebar" id="sidebar">
+  <div class="logo">
+    <h2>UFBA · ASSISTENTE ADM</h2>
+    <p>Edital 007/2026 · Instituto Avalia</p>
+  </div>
+  <div class="nav-item active" onclick="showSection('dashboard', this)">
+    <span class="icon">📊</span> Dashboard
+  </div>
+  <div class="nav-item" onclick="showSection('cronograma', this)">
+    <span class="icon">📅</span> Cronograma & Registro
+  </div>
+  <div class="nav-item" onclick="showSection('edital', this)">
+    <span class="icon">📋</span> Edital Verticalizado
+  </div>
+  <div class="nav-item" onclick="showSection('simulados', this)">
+    <span class="icon">✏️</span> Simulados
+  </div>
+  <div class="nav-item" onclick="showSection('pomodoro', this)">
+    <span class="icon">🍅</span> Pomodoro
+  </div>
+  <div class="nav-item" onclick="showSection('musica', this)">
+    <span class="icon">🎵</span> Música & Foco
+  </div>
+  <div class="nav-item" onclick="showSection('memoria', this)">
+    <span class="icon">🧠</span> Caderno de Aprendizado
+  </div>
+</nav>
+
+<!-- ===== MAIN ===== -->
+<main class="main" id="main">
+
+  <!-- ============================================================ -->
+  <!-- DASHBOARD -->
+  <!-- ============================================================ -->
+  <section id="dashboard" class="section active">
+    <h2 style="font-size:1.3rem; color:#c0d8f0; margin-bottom:1.2rem;">📊 Dashboard de Desempenho</h2>
+
+    <div class="dash-grid">
+      <div class="stat-card">
+        <div class="value" id="stat-progress">0%</div>
+        <div class="label">Progresso do Edital</div>
+        <div class="sub">tópicos concluídos</div>
+        <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+      <div class="stat-card">
+        <div class="value" id="stat-sessoes">0/0</div>
+        <div class="label">Sessões Concluídas</div>
+        <div class="sub" id="stat-sessoes-sub">na semana atual</div>
+        <div class="progress-bar"><div class="progress-fill green" id="sessoes-fill" style="width:0%"></div></div>
+      </div>
+      <div class="stat-card">
+        <div class="value" id="stat-semanas">0</div>
+        <div class="label">Semanas Finalizadas</div>
+        <div class="sub">de 4 semanas planejadas</div>
+      </div>
+      <div class="stat-card">
+        <div class="value" id="stat-acertos">0</div>
+        <div class="label">Acertos em Simulados</div>
+        <div class="sub" id="stat-sim-total">0 questões respondidas</div>
+      </div>
+      <div class="stat-card">
+        <div class="value" id="stat-erros">0</div>
+        <div class="label">Erros em Simulados</div>
+        <div class="sub">revisar estes temas</div>
+      </div>
+      <div class="stat-card">
+        <div class="value" id="stat-pomodoros">0</div>
+        <div class="label">Pomodoros</div>
+        <div class="sub">sessões concluídas</div>
+      </div>
+    </div>
+
+    <!-- Progresso semanal -->
+    <div class="card">
+      <h3>📅 Progresso Semanal Detalhado</h3>
+      <div id="weekly-progress">
+        <!-- preenchido via JS -->
+      </div>
+    </div>
+
+    <!-- Desempenho por disciplina -->
+    <div class="card">
+      <h3>📈 Desempenho por Disciplina (Edital Verticalizado)</h3>
+      <div id="disc-performance"></div>
+    </div>
+
+    <!-- Registro da semana atual -->
+    <div class="card">
+      <h3>🗒️ Registro da Semana Atual</h3>
+      <div id="current-week-register" style="font-size:0.82rem; color:#8aa4c8; line-height:1.7;"></div>
+    </div>
+
+    <!-- Metadados -->
+    <div class="card">
+      <h3>📌 Metadados do Concurso</h3>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:0.8rem; font-size:0.8rem;">
+        <div><span style="color:#5a7a9f;">Cargo:</span> <strong style="color:#c0d8f0;">Assistente em Administração (201)</strong></div>
+        <div><span style="color:#5a7a9f;">Nível:</span> <strong style="color:#c0d8f0;">Médio – Classe D</strong></div>
+        <div><span style="color:#5a7a9f;">Vagas:</span> <strong style="color:#c0d8f0;">94 (AC: 55 | PcD: 10 | PP: 22 | Ind: 3 | Qui: 2)</strong></div>
+        <div><span style="color:#5a7a9f;">Salário:</span> <strong style="color:#c0d8f0;">R$ 3.181,39</strong></div>
+        <div><span style="color:#5a7a9f;">Taxa:</span> <strong style="color:#c0d8f0;">R$ 100,00</strong></div>
+        <div><span style="color:#5a7a9f;">Banca:</span> <strong style="color:#c0d8f0;">Instituto Avalia</strong></div>
+        <div><span style="color:#5a7a9f;">Prova:</span> <strong style="color:#c0d8f0;">20/12/2026 (manhã)</strong></div>
+        <div><span style="color:#5a7a9f;">Inscrições:</span> <strong style="color:#c0d8f0;">28/09 a 29/10/2026</strong></div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <strong>🎯 Meta até a prova:</strong> Concluir o edital verticalizado, marcar todas as sessões semanais,
+      realizar pelo menos 5 simulados completos e manter média de 80% de acerto nos conhecimentos específicos.
+      A prova objetiva tem 60 questões com peso total de 90 pontos e a redação vale 60 pontos.
+      Nota mínima: 50% na objetiva (sem zerar nenhuma área) e 30 pontos na redação.
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- CRONOGRAMA COM REGISTRO SEMANAL -->
+  <!-- ============================================================ -->
+  <section id="cronograma" class="section">
+    <h2 style="font-size:1.3rem; color:#c0d8f0; margin-bottom:1.2rem;">📅 Cronograma & Registro Semanal</h2>
+
+    <div class="info-box">
+      <strong>✅ Como usar:</strong> Escolha a semana, marque cada sessão estudada (Manhã / Tarde / Noite) e escreva
+      suas anotações no campo de registro. Tudo é salvo automaticamente e refletido no Dashboard.
+      <br><strong>📌 Estratégia Instituto Avalia:</strong> Português é a matéria mais "gramatiqueira" da banca —
+      priorize classes gramaticais, uso do "que"/"se", conjunções e regência. Em Direito, cobra literalidade da lei.
+    </div>
+
+    <!-- Seletor de semanas -->
+    <div class="week-selector" id="week-selector"></div>
+
+    <!-- Conteúdo da semana -->
+    <div class="card" id="week-content"></div>
+
+    <!-- Registro da semana -->
+    <div class="card">
+      <h3>🗒️ Registro de Anotações da Semana</h3>
+      <textarea
+        class="week-notes"
+        id="week-notes-textarea"
+        placeholder="Ex: Semana produtiva. Preciso revisar crase e concordância verbal. Consegui 18/20 no simulado de Português. Na próxima semana focar em licitações (Lei 14.133/2021)..."></textarea>
+      <div style="margin-top:0.8rem; display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn btn-primary btn-sm" onclick="saveWeekNotes()">💾 Salvar Anotações</button>
+        <button class="btn btn-secondary btn-sm" onclick="clearWeekNotes()">🗑️ Limpar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- EDITAL VERTICALIZADO -->
+  <!-- ============================================================ -->
+  <section id="edital" class="section">
+    <h2 style="font-size:1.3rem; color:#c0d8f0; margin-bottom:1.2rem;">📋 Edital Verticalizado</h2>
+    <div class="info-box">
+      Clique nos tópicos para marcá-los como estudados. O progresso é salvo automaticamente no navegador.
+    </div>
+
+    <div class="disc-grid" id="edital-grid">
+      <div class="disc-card" data-disc="portugues">
+        <div class="header">
+          <h4>📖 Língua Portuguesa</h4>
+          <span class="badge">12 questões · 12 pts</span>
+        </div>
+        <ul class="topics" data-disc="portugues">
+          <li data-topic="p1"><span class="check">✓</span> Compreensão e interpretação de textos</li>
+          <li data-topic="p2"><span class="check">✓</span> Gêneros e tipologia textual</li>
+          <li data-topic="p3"><span class="check">✓</span> Ortografia oficial</li>
+          <li data-topic="p4"><span class="check">✓</span> Mecanismos de coesão textual</li>
+          <li data-topic="p5"><span class="check">✓</span> Emprego de tempos e modos verbais</li>
+          <li data-topic="p6"><span class="check">✓</span> Estrutura morfossintática do período</li>
+          <li data-topic="p7"><span class="check">✓</span> Emprego das classes de palavras</li>
+          <li data-topic="p8"><span class="check">✓</span> Emprego dos sinais de pontuação</li>
+          <li data-topic="p9"><span class="check">✓</span> Concordância verbal e nominal</li>
+          <li data-topic="p10"><span class="check">✓</span> Regência verbal e nominal</li>
+          <li data-topic="p11"><span class="check">✓</span> Crase</li>
+          <li data-topic="p12"><span class="check">✓</span> Colocação pronominal</li>
+          <li data-topic="p13"><span class="check">✓</span> Reescrita de frases e parágrafos</li>
+          <li data-topic="p14"><span class="check">✓</span> Significação das palavras</li>
+          <li data-topic="p15"><span class="check">✓</span> Manual de Redação da Presidência (Parte I)</li>
+        </ul>
+      </div>
+
+      <div class="disc-card" data-disc="informatica">
+        <div class="header">
+          <h4>💻 Noções de Informática</h4>
+          <span class="badge">6 questões · 6 pts</span>
+        </div>
+        <ul class="topics" data-disc="informatica">
+          <li data-topic="i1"><span class="check">✓</span> Conceitos básicos: Hardware e Software</li>
+          <li data-topic="i2"><span class="check">✓</span> Sistemas operacionais (Windows/Linux)</li>
+          <li data-topic="i3"><span class="check">✓</span> Editores de texto (Word/Writer)</li>
+          <li data-topic="i4"><span class="check">✓</span> Planilhas eletrônicas (Excel/Calc)</li>
+          <li data-topic="i5"><span class="check">✓</span> Internet: navegação, correio eletrônico</li>
+          <li data-topic="i6"><span class="check">✓</span> Segurança da informação</li>
+          <li data-topic="i7"><span class="check">✓</span> Computação em nuvem</li>
+        </ul>
+      </div>
+
+      <div class="disc-card" data-disc="admpublica">
+        <div class="header">
+          <h4>🏛️ Administração Pública</h4>
+          <span class="badge">12 questões · 12 pts</span>
+        </div>
+        <ul class="topics" data-disc="admpublica">
+          <li data-topic="a1"><span class="check">✓</span> Administração Pública Federal (CF, Título III, Cap. VII)</li>
+          <li data-topic="a2"><span class="check">✓</span> Agente Público: função pública e atendimento ao cidadão</li>
+          <li data-topic="a3"><span class="check">✓</span> Regime Jurídico dos Servidores (Lei 8.112/1990)</li>
+          <li data-topic="a4"><span class="check">✓</span> Ética na Adm. Pública (Dec. 1.171/1994)</li>
+          <li data-topic="a5"><span class="check">✓</span> Improbidade Administrativa (Lei 8.429/1992)</li>
+          <li data-topic="a6"><span class="check">✓</span> Plano de Carreira dos TAEs (Lei 11.091/2005)</li>
+          <li data-topic="a7"><span class="check">✓</span> LGPD (Lei 13.709/2018)</li>
+          <li data-topic="a8"><span class="check">✓</span> Estatuto e Regimento Geral da UFBA</li>
+          <li data-topic="a9"><span class="check">✓</span> Processo Administrativo (Lei 9.784/1999)</li>
+          <li data-topic="a10"><span class="check">✓</span> Licitações (Lei 14.133/2021)</li>
+        </ul>
+      </div>
+
+      <div class="disc-card" data-disc="especificos">
+        <div class="header">
+          <h4>⚙️ Conhecimentos Específicos</h4>
+          <span class="badge">30 questões · 60 pts</span>
+        </div>
+        <ul class="topics" data-disc="especificos">
+          <li data-topic="e1"><span class="check">✓</span> Funções administrativas: planejamento, organização, direção e controle</li>
+          <li data-topic="e2"><span class="check">✓</span> Noções de administração geral</li>
+          <li data-topic="e3"><span class="check">✓</span> Gestão de pessoas</li>
+          <li data-topic="e4"><span class="check">✓</span> Gestão de materiais e patrimônio</li>
+          <li data-topic="e5"><span class="check">✓</span> Noções de documentação e arquivo</li>
+          <li data-topic="e6"><span class="check">✓</span> Redação oficial</li>
+          <li data-topic="e7"><span class="check">✓</span> Atendimento ao público</li>
+          <li data-topic="e8"><span class="check">✓</span> Rotinas administrativas</li>
+          <li data-topic="e9"><span class="check">✓</span> Gestão financeira e orçamentária</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SIMULADOS -->
+  <!-- ============================================================ -->
+  <section id="simulados" class="section">
+    <h2 style="font-size:1.3rem; color:#c0d8f0; margin-bottom:1.2rem;">✏️ Simulados — Estilo Instituto Avalia</h2>
+    <div class="info-box">
+      <strong>🎯 Estilo da banca:</strong> Questões de múltipla escolha com 5 alternativas, enunciados
+      claros e diretos em Português (foco gramatical), e contextualizados nos Específicos.
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showSimulado('sim1', this)">Simulado 1 — Português</button>
+      <button class="tab-btn" onclick="showSimulado('sim2', this)">Simulado 2 — Adm. Pública</button>
+      <button class="tab-btn" onclick="showSimulado('sim3', this)">Simulado 3 — Específicos</button>
+      <button class="tab-btn" onclick="showSimulado('sim4', this)">Simulado 4 — Informática</button>
+    </div>
+
+    <div id="sim1" class="simulado-container section active"></div>
+    <div id="sim2" class="simulado-container section"></div>
+    <div id="sim3" class="simulado-container section"></div>
+    <div id="sim4" class="simulado-container section"></div>
+
+    <div style="text-align:center; margin-top:1.5rem;">
+      <button class="btn btn-secondary" onclick="resetSimulados()">🔄 Resetar Resultados dos Simulados</button>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- POMODORO -->
+  <!-- ============================================================ -->
+  <section id="pomodoro" class="section">
+    <h2 style="font-size:1.3rem; color:#c0d8f0; margin-bottom:1.2rem;">🍅 Timer Pomodoro</h2>
+
+    <div class="card">
+      <div class="pomodoro-box">
+        <div class="pomodoro-label" id="pomo-phase">FOCO</div>
+        <div class="pomodoro-timer" id="pomo-display">25:00</div>
+        <div style="font-size:0.75rem; color:#3a5a7f; margin-bottom:0.5rem;">
+          Ciclo: <span id="pomo-cycle">1</span> · Pomodoros concluídos: <span id="pomo-count">0</span>
+        </div>
+        <div class="pomodoro-controls">
+          <button class="btn btn-primary" id="pomo-start" onclick="togglePomodoro()">▶ Iniciar</button>
+          <button class="btn btn-secondary" onclick="resetPomodoro()">↻ Resetar</button>
+        </div>
+        <div style="margin-top:1.2rem; font-size:0.75rem; color:#3a5a7f;">
+          🎯 25 min de foco · 5 min de pausa curta · 15 min de pausa longa a cada 4 ciclos
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📋 Checklist de Sessão</h3>
+      <div id="pomo-checklist">
+        <label class="checklist-item"><input type="checkbox"> Celular no silencioso e fora de alcance</label>
+        <label class="checklist-item"><input type="checkbox"> Água e lanche preparados</label>
+        <label class="checklist-item"><input type="checkbox"> Material de estudo organizado</label>
+        <label class="checklist-item"><input type="checkbox"> Fone de ouvido (se for usar música)</label>
+        <label class="checklist-item"><input type="checkbox"> Meta da sessão definida</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- MÚSICA -->
+  <!-- ============================================================ -->
+  <section id="musica" class="section">
+    <h2 style="font-size:1.3rem; color:#c0d8f0; margin-bottom:1.2rem;">🎵 Música, Foco e Relaxamento</h2>
+
+    <div class="card">
+      <h3>▶ Player de Estudo</h3>
+      <div class="music-options">
+        <button class="music-btn active" onclick="loadMusic('lofi', event)">🎧 Lofi Beats</button>
+        <button class="music-btn" onclick="loadMusic('chill', event)">🌧️ Som da Chuva</button>
+        <button class="music-btn" onclick="loadMusic('classical', event)">🎻 Clássica para Foco</button>
+        <button class="music-btn" onclick="loadMusic('binaural', event)">🧠 Frequências de Estudo</button>
+        <button class="music-btn" onclick="loadMusic('jazz', event)">🎷 Jazz Instrumental</button>
+        <button class="music-btn" onclick="loadMusic('nature', event)">🌿 Sons da Natureza</button>
+      </div>
+      <div id="yt-player">
+        <iframe width="100%" height="180" src="https://www.youtube.com/embed/jfKfPfyJRdk" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🧘 Pausas Programadas</h3>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; font-size:0.8rem;">
+        <div style="background:#0d1525; padding:1rem; border-radius:10px; border:1px solid #1a2a4a;">
+          <strong style="color:#00d4ff;">Pausa Curta (5 min)</strong><br>
+          <span style="color:#7a9abf;">Levante-se, alongue o pescoço e os ombros, beba água. Evite redes sociais.</span>
+        </div>
+        <div style="background:#0d1525; padding:1rem; border-radius:10px; border:1px solid #1a2a4a;">
+          <strong style="color:#7b2ff7;">Pausa Longa (15 min)</strong><br>
+          <span style="color:#7a9abf;">Caminhe um pouco, faça um lanche leve, feche os olhos por 5 minutos.</span>
+        </div>
+        <div style="background:#0d1525; padding:1rem; border-radius:10px; border:1px solid #1a2a4a;">
+          <strong style="color:#ff2d95;">Recuperação Mental</strong><br>
+          <span style="color:#7a9abf;">A cada 4 pomodoros, faça a pausa longa. Não pule as pausas — elas consolidam o aprendizado.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- MEMÓRIA -->
+  <!-- ============================================================ -->
+  <section id="memoria" class="section">
+    <h2 style="font-size:1.3rem; color:#c0d8f0; margin-bottom:1.2rem;">🧠 Caderno de Aprendizado Contínuo</h2>
+
+    <div class="info-box">
+      <strong>🔗 Integração com IA (NotebookLM / outras):</strong> Registre insights, dúvidas e erros recorrentes.
+      Copie o conteúdo e cole no NotebookLM, ChatGPT ou qualquer IA para gerar resumos e mapas mentais.
+    </div>
+
+    <div class="card">
+      <h3>📝 Registro de Insights e Erros</h3>
+      <div style="display:flex; gap:8px; margin-bottom:1rem; flex-wrap:wrap;">
+        <select id="memory-disc" style="flex:1; min-width:150px; padding:8px 12px; border-radius:8px; border:1px solid #1a2a4a; background:#0d1525; color:#c0d8f0; font-family:inherit; font-size:0.8rem;">
+          <option value="portugues">Português</option>
+          <option value="informatica">Informática</option>
+          <option value="admpublica">Adm. Pública</option>
+          <option value="especificos">Específicos</option>
+        </select>
+        <input type="text" id="memory-text" placeholder="Insight, dúvida ou erro..." style="flex:3; min-width:200px; padding:8px 14px; border-radius:8px; border:1px solid #1a2a4a; background:#0d1525; color:#c0d8f0; font-family:inherit; font-size:0.8rem;">
+        <button class="btn btn-primary btn-sm" onclick="addMemory()">+ Adicionar</button>
+      </div>
+      <div id="memory-list"></div>
+    </div>
+
+    <div class="card">
+      <h3>🔁 Sugestões de Revisão</h3>
+      <div style="font-size:0.8rem; color:#8aa4c8; line-height:1.8;">
+        <p>📌 <strong style="color:#00d4ff;">Revisão espaçada:</strong> Ao marcar um tópico como estudado, revise-o em 1, 7 e 30 dias.</p>
+        <p>📌 <strong style="color:#7b2ff7;">Mapas mentais:</strong> Para cada lei (8.112, 11.091, 14.133), crie um mapa com os artigos mais cobrados.</p>
+        <p>📌 <strong style="color:#ff2d95;">Questões comentadas:</strong> Use o caderno de erros para registrar o porquê de cada erro.</p>
+        <p>📌 <strong style="color:#d4d46a;">Simulados periódicos:</strong> 1 simulado completo por semana a partir de novembro.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    Dashboard de Estudos · Concurso UFBA 2026 · Assistente em Administração · Banca Instituto Avalia
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================================================================
+   NAVEGAÇÃO
+   ================================================================ */
+function showSection(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (el) el.classList.add('active');
+  if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+}
+
+/* ================================================================
+   TOAST
+   ================================================================ */
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+/* ================================================================
+   ESTADO
+   ================================================================ */
+const STORAGE_KEY = 'ufba_assist_adm_v3';
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return {
+    topics: {},
+    simAcertos: 0,
+    simErros: 0,
+    simTotal: 0,
+    simRespostas: {},
+    pomodoros: 0,
+    pomoCycle: 1,
+    memories: [],
+    sessions: {},        // { "w1_d0_manha": true, ... }
+    weekNotes: {},       // { "w1": "texto..." }
+    currentWeek: 'w1'
+  };
+}
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+let state = loadState();
+
+/* ================================================================
+   DADOS DAS SEMANAS (CRONOGRAMA)
+   ================================================================ */
+const SUBJECT_TAGS = {
+  'Português': 'tag-port',
+  'Informática': 'tag-info',
+  'Adm. Pública': 'tag-adm',
+  'Específicos': 'tag-esp',
+  'Simulado': 'tag-sim',
+  'Revisão': 'tag-rev'
+};
+
+const weeksData = [
+  {
+    id: 'w1',
+    label: 'Semana 1',
+    period: '05/10 – 11/10',
+    days: [
+      { name: 'Domingo', sessions: { manha: ['Português','Revisão'], tarde: ['Adm. Pública','Específicos'], noite: ['Simulado','Revisão'] } },
+      { name: 'Segunda', sessions: { manha: ['Português','Informática'], tarde: ['Específicos','Adm. Pública'], noite: ['Português','Revisão'] } },
+      { name: 'Terça',   sessions: { manha: ['Adm. Pública','Específicos'], tarde: ['Português','Informática'], noite: ['Adm. Pública','Revisão'] } },
+      { name: 'Quarta',  sessions: { manha: ['Específicos','Português'], tarde: ['Adm. Pública','Informática'], noite: ['Específicos','Revisão'] } },
+      { name: 'Quinta',  sessions: { manha: ['Português','Adm. Pública'], tarde: ['Específicos','Informática'], noite: ['Português','Revisão'] } },
+      { name: 'Sexta',   sessions: { manha: ['Adm. Pública','Específicos'], tarde: ['Português','Simulado'], noite: ['Revisão','Adm. Pública'] } },
+      { name: 'Sábado',  sessions: { manha: ['Simulado','Revisão'], tarde: ['Específicos','Português'], noite: ['Informática','Adm. Pública'] } }
+    ]
+  },
+  {
+    id: 'w2',
+    label: 'Semana 2',
+    period: '12/10 – 18/10',
+    days: [
+      { name: 'Domingo', sessions: { manha: ['Português','Revisão'], tarde: ['Específicos','Adm. Pública'], noite: ['Simulado','Revisão'] } },
+      { name: 'Segunda', sessions: { manha: ['Adm. Pública','Informática'], tarde: ['Português','Específicos'], noite: ['Adm. Pública','Revisão'] } },
+      { name: 'Terça',   sessions: { manha: ['Específicos','Português'], tarde: ['Adm. Pública','Informática'], noite: ['Português','Revisão'] } },
+      { name: 'Quarta',  sessions: { manha: ['Português','Adm. Pública'], tarde: ['Específicos','Informática'], noite: ['Específicos','Revisão'] } },
+      { name: 'Quinta',  sessions: { manha: ['Adm. Pública','Específicos'], tarde: ['Português','Adm. Pública'], noite: ['Informática','Revisão'] } },
+      { name: 'Sexta',   sessions: { manha: ['Simulado','Revisão'], tarde: ['Específicos','Português'], noite: ['Adm. Pública','Revisão'] } },
+      { name: 'Sábado',  sessions: { manha: ['Português','Simulado'], tarde: ['Informática','Específicos'], noite: ['Adm. Pública','Revisão'] } }
+    ]
+  },
+  {
+    id: 'w3',
+    label: 'Semana 3',
+    period: '19/10 – 25/10',
+    days: [
+      { name: 'Domingo', sessions: { manha: ['Português','Revisão'], tarde: ['Adm. Pública','Específicos'], noite: ['Simulado','Revisão'] } },
+      { name: 'Segunda', sessions: { manha: ['Específicos','Informática'], tarde: ['Português','Adm. Pública'], noite: ['Português','Revisão'] } },
+      { name: 'Terça',   sessions: { manha: ['Adm. Pública','Português'], tarde: ['Específicos','Informática'], noite: ['Específicos','Revisão'] } },
+      { name: 'Quarta',  sessions: { manha: ['Português','Específicos'], tarde: ['Adm. Pública','Português'], noite: ['Informática','Revisão'] } },
+      { name: 'Quinta',  sessions: { manha: ['Adm. Pública','Específicos'], tarde: ['Informática','Português'], noite: ['Adm. Pública','Revisão'] } },
+      { name: 'Sexta',   sessions: { manha: ['Simulado','Revisão'], tarde: ['Específicos','Adm. Pública'], noite: ['Português','Revisão'] } },
+      { name: 'Sábado',  sessions: { manha: ['Português','Adm. Pública'], tarde: ['Simulado','Específicos'], noite: ['Informática','Revisão'] } }
+    ]
+  },
+  {
+    id: 'w4',
+    label: 'Semana 4',
+    period: '26/10 – 01/11',
+    days: [
+      { name: 'Domingo', sessions: { manha: ['Português','Revisão'], tarde: ['Específicos','Adm. Pública'], noite: ['Simulado','Revisão'] } },
+      { name: 'Segunda', sessions: { manha: ['Adm. Pública','Informática'], tarde: ['Português','Específicos'], noite: ['Adm. Pública','Revisão'] } },
+      { name: 'Terça',   sessions: { manha: ['Específicos','Português'], tarde: ['Adm. Pública','Informática'], noite: ['Português','Revisão'] } },
+      { name: 'Quarta',  sessions: { manha: ['Português','Adm. Pública'], tarde: ['Específicos','Informática'], noite: ['Específicos','Revisão'] } },
+      { name: 'Quinta',  sessions: { manha: ['Adm. Pública','Específicos'], tarde: ['Português','Simulado'], noite: ['Informática','Revisão'] } },
+      { name: 'Sexta',   sessions: { manha: ['Simulado','Revisão'], tarde: ['Específicos','Português'], noite: ['Adm. Pública','Revisão'] } },
+      { name: 'Sábado',  sessions: { manha: ['Português','Adm. Pública'], tarde: ['Informática','Simulado'], noite: ['Específicos','Revisão'] } }
+    ]
+  }
+];
+
+const WEEK_SESSION_TOTAL = weeksData.reduce((acc, w) =>
+  acc + w.days.reduce((a, d) => a + Object.keys(d.sessions).length, 0), 0);
+
+function getWeekSessionCount(weekId) {
+  const w = weeksData.find(x => x.id === weekId);
+  if (!w) return { done: 0, total: 0 };
+  let done = 0, total = 0;
+  w.days.forEach((d, di) => {
+    Object.keys(d.sessions).forEach(period => {
+      total++;
+      const key = `${weekId}_${di}_${period}`;
+      if (state.sessions[key]) done++;
+    });
+  });
+  return { done, total };
+}
+
+function isWeekComplete(weekId) {
+  const { done, total } = getWeekSessionCount(weekId);
+  return total > 0 && done === total;
+}
+
+/* ================================================================
+   RENDER: SELETOR DE SEMANAS
+   ================================================================ */
+function renderWeekSelector() {
+  const sel = document.getElementById('week-selector');
+  sel.innerHTML = '';
+  weeksData.forEach(w => {
+    const { done, total } = getWeekSessionCount(w.id);
+    const complete = done === total && total > 0;
+    const btn = document.createElement('button');
+    btn.className = 'week-btn' + (state.currentWeek === w.id ? ' active' : '');
+    btn.innerHTML = `
+      <span class="wb-label">${w.label} ${complete ? '✅' : ''}</span>
+      <span class="wb-period">${w.period}</span>
+      <span class="wb-progress">${done}/${total} sessões</span>
+    `;
+    btn.onclick = () => {
+      state.currentWeek = w.id;
+      saveState();
+      renderWeekSelector();
+      renderWeekContent();
+    };
+    sel.appendChild(btn);
+  });
+}
+
+/* ================================================================
+   RENDER: CONTEÚDO DA SEMANA
+   ================================================================ */
+function renderWeekContent() {
+  const week = weeksData.find(x => x.id === state.currentWeek) || weeksData[0];
+  const { done, total } = getWeekSessionCount(week.id);
+  const pct = total > 0 ? Math.round((done/total)*100) : 0;
+
+  const container = document.getElementById('week-content');
+  container.innerHTML = `
+    <div class="week-header">
+      <h3>📅 ${week.label} · ${week.period}</h3>
+      <div class="week-stats">
+        <span>Sessões: <strong>${done}/${total}</strong></span>
+        <span>Progresso: <strong>${pct}%</strong></span>
+      </div>
+    </div>
+    <div class="progress-bar" style="margin-bottom:1rem;">
+      <div class="progress-fill green" style="width:${pct}%"></div>
+    </div>
+    <div class="day-grid" id="day-grid"></div>
+    <div class="week-actions">
+      <button class="btn btn-success btn-sm" onclick="markAllWeek(true)">✅ Marcar semana toda</button>
+      <button class="btn btn-secondary btn-sm" onclick="markAllWeek(false)">🔄 Desmarcar semana</button>
+    </div>
+  `;
+
+  const grid = document.getElementById('day-grid');
+
+  week.days.forEach((day, di) => {
+    const dayCard = document.createElement('div');
+    dayCard.className = 'day-card';
+
+    // Contagem do dia
+    let dayDone = 0, dayTotal = 0;
+    Object.keys(day.sessions).forEach(p => {
+      dayTotal++;
+      if (state.sessions[`${week.id}_${di}_${p}`]) dayDone++;
+    });
+    if (dayDone === dayTotal && dayTotal > 0) dayCard.classList.add('complete');
+
+    let sessionsHTML = '';
+    const periodLabels = { manha: '☀️ Manhã', tarde: '🌤️ Tarde', noite: '🌙 Noite' };
+    Object.entries(day.sessions).forEach(([period, subjects]) => {
+      const key = `${week.id}_${di}_${period}`;
+      const checked = !!state.sessions[key];
+      const tags = subjects.map(s => {
+        const cls = SUBJECT_TAGS[s] || 'tag-rev';
+        return `<span class="subject-tag ${cls}">${s}</span>`;
+      }).join(' ');
+      sessionsHTML += `
+        <label class="session-block ${checked ? 'checked' : ''}" data-key="${key}">
+          <input type="checkbox" ${checked ? 'checked' : ''}
+                 onchange="toggleSession('${key}', this)">
+          <div class="session-content">
+            <div class="session-label">${periodLabels[period]}</div>
+            <div class="session-tags">${tags}</div>
+          </div>
+        </label>
+      `;
+    });
+
+    dayCard.innerHTML = `
+      <div class="day-title">
+        <span>${day.name}</span>
+        <span class="day-progress ${dayDone === dayTotal && dayTotal > 0 ? 'done' : ''}">
+          ${dayDone}/${dayTotal}
+        </span>
+      </div>
+      ${sessionsHTML}
+    `;
+
+    grid.appendChild(dayCard);
+  });
+
+  // Carregar anotações
+  document.getElementById('week-notes-textarea').value = state.weekNotes[week.id] || '';
+}
+
+/* ================================================================
+   TOGGLE SESSÃO
+   ================================================================ */
+function toggleSession(key, checkbox) {
+  if (checkbox.checked) {
+    state.sessions[key] = true;
+  } else {
+    delete state.sessions[key];
+  }
+  saveState();
+
+  // Atualiza visual do label
+  const label = checkbox.closest('.session-block');
+  if (label) label.classList.toggle('checked', checkbox.checked);
+
+  // Atualiza cabeçalho e dia
+  renderWeekSelector();
+  updateDayCounters();
+  updateDashboard();
+
+  if (checkbox.checked) toast('✅ Sessão marcada!');
+}
+
+function updateDayCounters() {
+  const week = weeksData.find(x => x.id === state.currentWeek);
+  if (!week) return;
+  const dayCards = document.querySelectorAll('#day-grid .day-card');
+  week.days.forEach((day, di) => {
+    const card = dayCards[di];
+    if (!card) return;
+    let dDone = 0, dTotal = 0;
+    Object.keys(day.sessions).forEach(p => {
+      dTotal++;
+      if (state.sessions[`${week.id}_${di}_${p}`]) dDone++;
+    });
+    const progEl = card.querySelector('.day-progress');
+    if (progEl) {
+      progEl.textContent = `${dDone}/${dTotal}`;
+      progEl.classList.toggle('done', dDone === dTotal && dTotal > 0);
+    }
+    card.classList.toggle('complete', dDone === dTotal && dTotal > 0);
+  });
+
+  // Atualiza cabeçalho
+  const { done, total } = getWeekSessionCount(week.id);
+  const pct = total > 0 ? Math.round((done/total)*100) : 0;
+  const statsEl = document.querySelector('#week-content .week-stats');
+  if (statsEl) {
+    statsEl.innerHTML = `
+      <span>Sessões: <strong>${done}/${total}</strong></span>
+      <span>Progresso: <strong>${pct}%</strong></span>
+    `;
+  }
+  const bar = document.querySelector('#week-content .progress-fill');
+  if (bar) bar.style.width = pct + '%';
+}
+
+/* ================================================================
+   MARCAR / DESMARCAR SEMANA INTEIRA
+   ================================================================ */
+function markAllWeek(value) {
+  const week = weeksData.find(x => x.id === state.currentWeek);
+  if (!week) return;
+  week.days.forEach((day, di) => {
+    Object.keys(day.sessions).forEach(p => {
+      const key = `${week.id}_${di}_${p}`;
+      if (value) state.sessions[key] = true;
+      else delete state.sessions[key];
+    });
+  });
+  saveState();
+  renderWeekSelector();
+  renderWeekContent();
+  updateDashboard();
+  toast(value ? '✅ Semana toda marcada!' : '🔄 Semana desmarcada.');
+}
+
+/* ================================================================
+   ANOTAÇÕES DA SEMANA
+   ================================================================ */
+function saveWeekNotes() {
+  const txt = document.getElementById('week-notes-textarea').value;
+  state.weekNotes[state.currentWeek] = txt;
+  saveState();
+  updateDashboard();
+  toast('💾 Anotações salvas!');
+}
+
+function clearWeekNotes() {
+  if (!confirm('Limpar as anotações desta semana?')) return;
+  document.getElementById('week-notes-textarea').value = '';
+  delete state.weekNotes[state.currentWeek];
+  saveState();
+  updateDashboard();
+  toast('🗑️ Anotações limpas.');
+}
+
+/* ================================================================
+   DASHBOARD — ATUALIZAÇÃO
+   ================================================================ */
+function updateDashboard() {
+  // Progresso do edital
+  const allTopics = document.querySelectorAll('.topics li');
+  const totalTopics = allTopics.length;
+  const doneTopics = document.querySelectorAll('.topics li.done').length;
+  const pct = totalTopics > 0 ? Math.round((doneTopics / totalTopics) * 100) : 0;
+  document.getElementById('stat-progress').textContent = pct + '%';
+  document.getElementById('prog-fill').style.width = pct + '%';
+
+  // Sessões da semana atual
+  const current = state.currentWeek;
+  const { done, total } = getWeekSessionCount(current);
+  const sessPct = total > 0 ? Math.round((done/total)*100) : 0;
+  document.getElementById('stat-sessoes').textContent = `${done}/${total}`;
+  document.getElementById('stat-sessoes-sub').textContent =
+    `${weeksData.find(w => w.id === current).label} · ${sessPct}%`;
+  document.getElementById('sessoes-fill').style.width = sessPct + '%';
+
+  // Semanas finalizadas
+  const completedWeeks = weeksData.filter(w => isWeekComplete(w.id)).length;
+  document.getElementById('stat-semanas').textContent = completedWeeks;
+
+  // Simulados
+  document.getElementById('stat-acertos').textContent = state.simAcertos;
+  document.getElementById('stat-erros').textContent = state.simErros;
+  document.getElementById('stat-sim-total').textContent = state.simTotal + ' questões respondidas';
+  document.getElementById('stat-pomodoros').textContent = state.pomodoros;
+
+  // Progresso semanal detalhado
+  const wpDiv = document.getElementById('weekly-progress');
+  wpDiv.innerHTML = '';
+  weeksData.forEach(w => {
+    const { done, total } = getWeekSessionCount(w.id);
+    const p = total > 0 ? Math.round((done/total)*100) : 0;
+    const complete = done === total && total > 0;
+    wpDiv.innerHTML += `
+      <div style="margin-bottom:1rem; padding:0.8rem; background:#0a1220; border-radius:10px; border:1px solid ${complete ? '#00d4ff44' : '#1a2a4a'};">
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.82rem; color:#a0b8d8; margin-bottom:6px;">
+          <span>
+            <strong style="color:${complete ? '#00ff88' : '#c0d8f0'};">${w.label}</strong>
+            <span style="color:#5a7a9f; font-size:0.72rem;"> · ${w.period}</span>
+            ${complete ? ' <span style="color:#00ff88;">✅</span>' : ''}
+          </span>
+          <span>${done}/${total} · <strong style="color:${p === 100 ? '#00ff88' : '#00d4ff'};">${p}%</strong></span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill ${complete ? 'green' : ''}" style="width:${p}%"></div></div>
+      </div>
+    `;
+  });
+
+  // Desempenho por disciplina
+  const discMap = {
+    'portugues': 'Língua Portuguesa',
+    'informatica': 'Noções de Informática',
+    'admpublica': 'Administração Pública',
+    'especificos': 'Conhecimentos Específicos'
+  };
+  const perfDiv = document.getElementById('disc-performance');
+  perfDiv.innerHTML = '';
+  for (const [key, label] of Object.entries(discMap)) {
+    const topics = document.querySelectorAll(`.topics[data-disc="${key}"] li`);
+    const d = document.querySelectorAll(`.topics[data-disc="${key}"] li.done`).length;
+    const t = topics.length;
+    const p = t > 0 ? Math.round((d/t)*100) : 0;
+    perfDiv.innerHTML += `
+      <div style="margin-bottom:0.8rem;">
+        <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#a0b8d8;">
+          <span>${label}</span>
+          <span>${d}/${t} · ${p}%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${p}%"></div></div>
+      </div>`;
+  }
+
+  // Registro da semana atual no dashboard
+  const cw = weeksData.find(w => w.id === current);
+  const notes = state.weekNotes[current];
+  const regDiv = document.getElementById('current-week-register');
+  if (notes && notes.trim()) {
+    regDiv.innerHTML = `
+      <p style="margin-bottom:0.6rem;">
+        <strong style="color:#00d4ff;">${cw.label} · ${cw.period}</strong>
+        <span style="color:#5a7a9f; font-size:0.75rem;"> — ${done}/${total} sessões concluídas</span>
+      </p>
+      <div style="background:#0a1220; padding:1rem; border-radius:10px; border-left:3px solid #7b2ff7; white-space:pre-wrap; font-size:0.78rem; color:#a0b8d8;">${escapeHtml(notes)}</div>
+    `;
+  } else {
+    regDiv.innerHTML = `
+      <p>Nenhuma anotação registrada para <strong style="color:#00d4ff;">${cw.label}</strong> ainda.</p>
+      <p style="margin-top:0.5rem; font-size:0.75rem; color:#5a7a9f;">Vá em <em>Cronograma & Registro</em> e escreva suas anotações da semana.</p>
+    `;
+  }
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+/* ================================================================
+   EDITAL VERTICALIZADO
+   ================================================================ */
+document.querySelectorAll('.disc-card .topics li').forEach(li => {
+  const topicId = li.dataset.topic;
+  if (state.topics[topicId]) li.classList.add('done');
+  li.addEventListener('click', (e) => {
+    e.stopPropagation();
+    li.classList.toggle('done');
+    state.topics[topicId] = li.classList.contains('done');
+    saveState();
+    updateDashboard();
+    toast(li.classList.contains('done') ? '✅ Tópico concluído!' : '🔄 Tópico desmarcado');
+  });
+});
+
+/* ================================================================
+   SIMULADOS
+   ================================================================ */
+const simulados = {
+  sim1: {
+    titulo: 'Simulado 1 — Língua Portuguesa (Estilo Instituto Avalia)',
+    questoes: [
+      { q: 'Assinale a alternativa em que o uso da crase está CORRETO:', opts: ['Entreguei o documento à ele.','Refiro-me à pessoas honestas.','Cheguei à Salvador ontem.','Obedeço à normas estabelecidas.','Fui à Bahia nas férias.'], correta: 4, explicacao: 'Usa-se crase antes de nome de lugar feminino que admite artigo "a" (Fui à Bahia).' },
+      { q: 'Na frase "O aluno que estudou foi aprovado", a partícula "que" exerce função de:', opts: ['Conjunção integrante','Pronome relativo','Conjunção causal','Partícula expletiva','Advérbio de intensidade'], correta: 1, explicacao: 'Retoma o antecedente "aluno" → pronome relativo.' },
+      { q: 'Assinale a concordância verbal CORRETA:', opts: ['Fazem dois anos que ele partiu.','Haviam muitos candidatos.','Existe pessoas boas.','Faz dois anos que ele partiu.','Aconteu vários problemas.'], correta: 3, explicacao: '"Fazer" indicando tempo é impessoal.' },
+      { q: 'Em "Ele se feriu com a faca", o "se" é:', opts: ['Pronome apassivador','Índice de indeterminação','Pronome reflexivo','Partícula expletiva','Conjunção subordinativa'], correta: 2, explicacao: 'Sujeito pratica e sofre a ação → reflexivo.' },
+      { q: 'A palavra "infelizmente" é formada por:', opts: ['Derivação prefixal','Derivação sufixal','Derivação prefixal e sufixal','Composição por aglutinação','Parassíntese'], correta: 2, explicacao: 'in- (prefixo) + feliz + -mente (sufixo).' }
+    ]
+  },
+  sim2: {
+    titulo: 'Simulado 2 — Administração Pública (Foco em Lei Seca)',
+    questoes: [
+      { q: 'Conforme a Lei 8.112/1990, a investidura em cargo público ocorrerá com a:', opts: ['Nomeação','Posse','Exercício','Homologação','Lotação'], correta: 1, explicacao: 'Art. 7º: investidura = posse.' },
+      { q: 'São formas de provimento de cargo público, EXCETO:', opts: ['Nomeação','Promoção','Readaptação','Transferência','Reintegração'], correta: 3, explicacao: 'Transferência não é forma de provimento (art. 8º).' },
+      { q: 'Segundo a CF/88, são princípios da administração pública:', opts: ['Legalidade, impessoalidade, moralidade, publicidade e eficiência','Legalidade, pessoalidade, moralidade, publicidade e eficácia','Legalidade, impessoalidade, imoralidade, publicidade e eficiência','Lei, impessoalidade, moralidade, publicidade e eficácia','Legalidade, impessoalidade, moralidade, privacidade e eficiência'], correta: 0, explicacao: 'LIMPE.' },
+      { q: 'Sobre a LGPD (Lei 13.709/2018):', opts: ['Aplica-se apenas a pessoas jurídicas de direito privado','Dados anonimizados são dados pessoais','A lei não se aplica ao poder público','O titular tem direito à confirmação da existência de tratamento','A LGPD revogou o Marco Civil da Internet'], correta: 3, explicacao: 'Art. 18, I da LGPD.' },
+      { q: 'Conforme a Lei 11.091/2005, o Plano de Carreira dos TAEs estrutura-se em:', opts: ['Classes A, B, C e D','Classes D e E apenas','Níveis de capacitação','Padrões de vencimento e níveis de capacitação','Apenas cargos de nível superior'], correta: 3, explicacao: 'Classes (D e E) + níveis de capacitação + padrões de vencimento.' }
+    ]
+  },
+  sim3: {
+    titulo: 'Simulado 3 — Conhecimentos Específicos',
+    questoes: [
+      { q: 'As funções administrativas clássicas (Fayol) são:', opts: ['Planejar, organizar, dirigir e controlar','Planejar, executar, verificar e agir','Organizar, liderar, motivar e comunicar','Decidir, organizar, dirigir e avaliar','Prever, organizar, comandar, coordenar e controlar'], correta: 0, explicacao: 'Abordagem clássica → PODC.' },
+      { q: 'Ponto de ressuprimento é:', opts: ['Estoque máximo permitido','Nível de estoque que indica novo pedido','Custo total de armazenagem','Quantidade ideal de compra','Prazo de entrega'], correta: 1, explicacao: 'Ponto de pedido, considerando lead time.' },
+      { q: 'O padrão ofício é utilizado para:', opts: ['Comunicações internas informais','Exposição de motivos','Comunicações entre órgãos e entidades da Administração','Correspondências pessoais','Publicação de atos normativos'], correta: 2, explicacao: 'Manual de Redação da Presidência.' },
+      { q: 'A gestão de pessoas no serviço público (Lei 8.112/1990) inclui:', opts: ['Apenas admissão e demissão','Provimento, vacância, remoção, redistribuição e substituição','Somente avaliação de desempenho','Treinamento e desenvolvimento apenas','Apenas licenças e afastamentos'], correta: 1, explicacao: 'Título III da Lei 8.112.' },
+      { q: 'O método de arquivamento por assunto é chamado de:', opts: ['Alfabético','Numérico','Geográfico','Ideográfico (por assunto)','Cronológico'], correta: 3, explicacao: 'Método ideográfico.' }
+    ]
+  },
+  sim4: {
+    titulo: 'Simulado 4 — Noções de Informática',
+    questoes: [
+      { q: 'No Windows, Ctrl + C serve para:', opts: ['Colar','Copiar','Recortar','Desfazer','Selecionar tudo'], correta: 1, explicacao: 'Ctrl+C = Copiar.' },
+      { q: 'No Excel, SOMA(A1:A10) realiza:', opts: ['A média','A soma de A1 até A10','A contagem','O maior valor','O produto'], correta: 1, explicacao: 'SOMA soma o intervalo.' },
+      { q: 'Computação em nuvem caracteriza-se por:', opts: ['Armazenamento local em HD externo','Uso de recursos computacionais sob demanda via internet','Apenas backup automático','Software instalado exclusivamente no PC','Rede local restrita'], correta: 1, explicacao: 'Cloud computing = recursos sob demanda.' },
+      { q: 'O que é phishing?', opts: ['Vírus que danifica hardware','Técnica de fraude online para obter dados pessoais','Protocolo de segurança de rede','Software de edição de imagens','Backup remoto'], correta: 1, explicacao: 'Engenharia social.' },
+      { q: 'No LibreOffice Calc, =MÉDIA(B1:B5) calcula:', opts: ['A soma','A média aritmética','A mediana','O desvio padrão','A moda'], correta: 1, explicacao: 'MÉDIA = média aritmética.' }
+    ]
+  }
+};
+
+function renderSimulado(id) {
+  const container = document.getElementById(id);
+  const sim = simulados[id];
+  if (!sim) return;
+  let html = `<h3 style="font-size:1rem; color:#5a9aff; margin-bottom:1rem;">${sim.titulo}</h3>`;
+  sim.questoes.forEach((q, idx) => {
+    const key = `${id}_q${idx}`;
+    const resp = state.simRespostas[key];
+    const isCorrect = resp !== undefined && resp === q.correta;
+    html += `<div class="simulado-question">
+      <div class="q-text"><strong>${idx+1}.</strong> ${q.q}</div>
+      <div class="q-options">`;
+    q.opts.forEach((opt, oi) => {
+      let cls = 'q-option';
+      if (resp !== undefined) {
+        if (oi === q.correta) cls += ' correct';
+        else if (oi === resp) cls += ' wrong';
+      }
+      html += `<div class="${cls}" onclick="answerSimulado('${id}', ${idx}, ${oi})">${String.fromCharCode(65+oi)}) ${opt}</div>`;
+    });
+    html += `</div>
+      <div class="q-feedback ${resp !== undefined ? 'show' : ''}">
+        ${resp !== undefined ? (isCorrect ? '✅ Correto! ' : '❌ Incorreto. ') + q.explicacao : ''}
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function answerSimulado(simId, qIdx, optIdx) {
+  const key = `${simId}_q${qIdx}`;
+  if (state.simRespostas[key] !== undefined) return;
+  const sim = simulados[simId];
+  const correta = sim.questoes[qIdx].correta;
+  state.simRespostas[key] = optIdx;
+  if (optIdx === correta) { state.simAcertos++; toast('✅ Resposta correta!'); }
+  else { state.simErros++; toast('❌ Incorreto. Veja a explicação.'); }
+  state.simTotal++;
+  saveState();
+  updateDashboard();
+  renderSimulado(simId);
+}
+
+function showSimulado(id, el) {
+  document.querySelectorAll('#simulados .simulado-container').forEach(c => c.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('#simulados .tab-btn').forEach(b => b.classList.remove('active'));
+  if (el) el.classList.add('active');
+  renderSimulado(id);
+}
+
+function resetSimulados() {
+  if (!confirm('Resetar todos os resultados dos simulados?')) return;
+  state.simAcertos = 0; state.simErros = 0; state.simTotal = 0; state.simRespostas = {};
+  saveState();
+  updateDashboard();
+  ['sim1','sim2','sim3','sim4'].forEach(renderSimulado);
+  toast('🔄 Simulados resetados.');
+}
+
+/* ================================================================
+   POMODORO
+   ================================================================ */
+let pomoInterval = null;
+let pomoSeconds = 25 * 60;
+let pomoPhase = 'foco';
+let pomoRunning = false;
+
+function togglePomodoro() {
+  if (pomoRunning) {
+    clearInterval(pomoInterval);
+    pomoRunning = false;
+    document.getElementById('pomo-start').textContent = '▶ Iniciar';
+  } else {
+    pomoRunning = true;
+    document.getElementById('pomo-start').textContent = '⏸ Pausar';
+    pomoInterval = setInterval(tickPomodoro, 1000);
+  }
+}
+
+function tickPomodoro() {
+  pomoSeconds--;
+  updatePomoDisplay();
+  if (pomoSeconds <= 0) {
+    clearInterval(pomoInterval);
+    pomoRunning = false;
+    document.getElementById('pomo-start').textContent = '▶ Iniciar';
+    if (pomoPhase === 'foco') {
+      state.pomodoros++;
+      state.pomoCycle = (state.pomoCycle % 4) + 1;
+      saveState();
+      updateDashboard();
+      if (state.pomoCycle === 1 && state.pomodoros > 0 && state.pomodoros % 4 === 0) {
+        pomoPhase = 'pausa-longa'; pomoSeconds = 15 * 60;
+        toast('🎉 Ciclo completo! Pausa longa de 15 minutos.');
+      } else {
+        pomoPhase = 'pausa-curta'; pomoSeconds = 5 * 60;
+        toast('☕ Pausa curta de 5 minutos. Levante-se!');
+      }
+    } else {
+      pomoPhase = 'foco'; pomoSeconds = 25 * 60;
+      toast('🎯 Hora de focar! Novo pomodoro de 25 minutos.');
+    }
+    updatePomoDisplay();
+  }
+}
+
+function updatePomoDisplay() {
+  const m = Math.floor(pomoSeconds / 60);
+  const s = pomoSeconds % 60;
+  document.getElementById('pomo-display').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  document.getElementById('pomo-phase').textContent =
+    pomoPhase === 'foco' ? 'FOCO' : (pomoPhase === 'pausa-curta' ? 'PAUSA CURTA' : 'PAUSA LONGA');
+  document.getElementById('pomo-cycle').textContent = state.pomoCycle;
+  document.getElementById('pomo-count').textContent = state.pomodoros;
+}
+
+function resetPomodoro() {
+  clearInterval(pomoInterval);
+  pomoRunning = false;
+  pomoPhase = 'foco';
+  pomoSeconds = 25 * 60;
+  document.getElementById('pomo-start').textContent = '▶ Iniciar';
+  updatePomoDisplay();
+  toast('↻ Timer resetado para 25:00');
+}
+
+/* ================================================================
+   MÚSICA
+   ================================================================ */
+const musicUrls = {
+  lofi: 'https://www.youtube.com/embed/jfKfPfyJRdk',
+  chill: 'https://www.youtube.com/embed/mPZkdNFkNps',
+  classical: 'https://www.youtube.com/embed/jgpJVI3tDbY',
+  binaural: 'https://www.youtube.com/embed/WPni755-Krg',
+  jazz: 'https://www.youtube.com/embed/Dx5qFachd3A',
+  nature: 'https://www.youtube.com/embed/eKFTSSKCzWA'
+};
+
+function loadMusic(type, ev) {
+  const url = musicUrls[type];
+  if (!url) return;
+  document.getElementById('yt-player').innerHTML =
+    `<iframe width="100%" height="180" src="${url}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+  document.querySelectorAll('.music-btn').forEach(b => b.classList.remove('active'));
+  if (ev && ev.target) ev.target.classList.add('active');
+  toast('🎵 Música carregada!');
+}
+
+/* ================================================================
+   MEMÓRIA
+   ================================================================ */
+function addMemory() {
+  const disc = document.getElementById('memory-disc').value;
+  const text = document.getElementById('memory-text').value.trim();
+  if (!text) { toast('⚠️ Digite algo antes de adicionar.'); return; }
+  state.memories.unshift({ disc, text, date: new Date().toLocaleDateString('pt-BR') });
+  saveState();
+  renderMemories();
+  document.getElementById('memory-text').value = '';
+  toast('📝 Insight registrado!');
+}
+
+function renderMemories() {
+  const list = document.getElementById('memory-list');
+  if (state.memories.length === 0) {
+    list.innerHTML = '<div style="font-size:0.8rem; color:#3a5a7f; padding:0.5rem;">Nenhum registro ainda. Adicione insights, dúvidas ou erros recorrentes.</div>';
+    return;
+  }
+  const discLabels = { portugues:'Português', informatica:'Informática', admpublica:'Adm. Pública', especificos:'Específicos' };
+  list.innerHTML = state.memories.map(m =>
+    `<div class="memory-entry">
+      <div class="timestamp">${m.date} · ${discLabels[m.disc] || m.disc}</div>
+      ${escapeHtml(m.text)}
+    </div>`
+  ).join('');
+}
+
+/* ================================================================
+   INIT
+   ================================================================ */
+function init() {
+  renderWeekSelector();
+  renderWeekContent();
+  updateDashboard();
+  ['sim1','sim2','sim3','sim4'].forEach(renderSimulado);
+  updatePomoDisplay();
+  renderMemories();
+
+  document.querySelectorAll('#pomo-checklist input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', function() {
+      this.parentElement.classList.toggle('checked', this.checked);
+    });
+  });
+}
+init();
+
+/* ================================================================
+   MOBILE
+   ================================================================ */
+document.addEventListener('click', (e) => {
+  if (window.innerWidth <= 768) {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && !e.target.closest('.nav-item')) {
+      sidebar.classList.remove('open');
+    }
+  }
+});
+
+if (window.innerWidth <= 768) {
+  const btn = document.createElement('button');
+  btn.innerHTML = '☰';
+  btn.style.cssText = 'position:fixed; top:12px; left:12px; z-index:200; background:#0d1421; border:1px solid #1a2a4a; color:#c0d8f0; font-size:1.4rem; padding:6px 12px; border-radius:8px; cursor:pointer;';
+  btn.onclick = () => document.getElementById('sidebar').classList.toggle('open');
+  document.body.appendChild(btn);
+}
+</script>
+</body>
+</html>
