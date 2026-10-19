@@ -104,6 +104,102 @@
     gap: 8px;
   }
 
+  /* ===== COUNTDOWN CARD ===== */
+  .countdown-card {
+    background: linear-gradient(135deg, #0f172a 0%, #1a1040 50%, #0f172a 100%);
+    border: 1px solid #7b2ff766;
+    border-radius: 18px;
+    padding: 1.8rem 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(123, 47, 247, 0.12);
+  }
+  .countdown-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #00d4ff, #7b2ff7, #ff2d95, #00d4ff);
+    background-size: 200% 100%;
+    animation: gradientShift 4s linear infinite;
+  }
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+  .countdown-card .cd-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #5a9aff;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+  .countdown-card .cd-days {
+    font-size: 5rem;
+    font-weight: 800;
+    line-height: 1;
+    background: linear-gradient(135deg, #00d4ff, #7b2ff7, #ff2d95);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0.2rem 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .countdown-card .cd-days-unit {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #c0d8f0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .countdown-card .cd-date {
+    font-size: 0.85rem;
+    color: #8aa4c8;
+    margin-top: 0.5rem;
+  }
+  .countdown-card .cd-date strong { color: #00d4ff; }
+
+  /* Mini contadores */
+  .cd-mini-grid {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.2rem;
+    flex-wrap: wrap;
+  }
+  .cd-mini {
+    background: #0a1220;
+    border: 1px solid #1a2a4a;
+    border-radius: 12px;
+    padding: 0.7rem 1.1rem;
+    min-width: 80px;
+    text-align: center;
+  }
+  .cd-mini .v {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #00d4ff;
+    font-variant-numeric: tabular-nums;
+  }
+  .cd-mini .l {
+    font-size: 0.6rem;
+    color: #5a7a9f;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-top: 2px;
+  }
+  .cd-message {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: #8aa4c8;
+    font-style: italic;
+  }
+  .cd-message.urgent { color: #ff2d95; font-weight: 600; }
+  .cd-message.done { color: #00ff88; font-weight: 600; }
+
   /* ===== DASH GRID ===== */
   .dash-grid {
     display: grid;
@@ -148,7 +244,6 @@
     width: 0%;
   }
   .progress-fill.green { background: linear-gradient(90deg, #00ff88, #00d4ff); }
-  .progress-fill.orange { background: linear-gradient(90deg, #ffaa00, #ff2d95); }
 
   /* ===== WEEK SELECTOR ===== */
   .week-selector {
@@ -337,7 +432,7 @@
   .btn-success { background: linear-gradient(135deg, #00ff88, #00d4ff); color: #062018; }
   .btn-success:hover { opacity: 0.85; }
 
-  /* ===== DISC CARDS (edital) ===== */
+  /* ===== DISC CARDS ===== */
   .disc-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -554,6 +649,10 @@
     .dash-grid { grid-template-columns: repeat(2, 1fr); }
     .pomodoro-timer { font-size: 2.8rem; }
     .day-grid { grid-template-columns: 1fr; }
+    .countdown-card .cd-days { font-size: 3.5rem; }
+    .countdown-card .cd-days-unit { font-size: 1rem; }
+    .cd-mini { padding: 0.5rem 0.8rem; min-width: 60px; }
+    .cd-mini .v { font-size: 1.1rem; }
   }
 </style>
 </head>
@@ -597,6 +696,31 @@
   <section id="dashboard" class="section active">
     <h2 style="font-size:1.3rem; color:#c0d8f0; margin-bottom:1.2rem;">📊 Dashboard de Desempenho</h2>
 
+    <!-- CONTADOR REGRESSIVO PARA A PROVA -->
+    <div class="countdown-card" id="countdown-card">
+      <div class="cd-label">⏳ Faltam para a prova</div>
+      <div class="cd-days" id="cd-days">--</div>
+      <div class="cd-days-unit" id="cd-days-unit">dias</div>
+      <div class="cd-date" id="cd-date">Carregando...</div>
+
+      <div class="cd-mini-grid">
+        <div class="cd-mini">
+          <div class="v" id="cd-hours">--</div>
+          <div class="l">Horas</div>
+        </div>
+        <div class="cd-mini">
+          <div class="v" id="cd-minutes">--</div>
+          <div class="l">Minutos</div>
+        </div>
+        <div class="cd-mini">
+          <div class="v" id="cd-seconds">--</div>
+          <div class="l">Segundos</div>
+        </div>
+      </div>
+
+      <div class="cd-message" id="cd-message"></div>
+    </div>
+
     <div class="dash-grid">
       <div class="stat-card">
         <div class="value" id="stat-progress">0%</div>
@@ -635,9 +759,7 @@
     <!-- Progresso semanal -->
     <div class="card">
       <h3>📅 Progresso Semanal Detalhado</h3>
-      <div id="weekly-progress">
-        <!-- preenchido via JS -->
-      </div>
+      <div id="weekly-progress"></div>
     </div>
 
     <!-- Desempenho por disciplina -->
@@ -676,7 +798,7 @@
   </section>
 
   <!-- ============================================================ -->
-  <!-- CRONOGRAMA COM REGISTRO SEMANAL -->
+  <!-- CRONOGRAMA -->
   <!-- ============================================================ -->
   <section id="cronograma" class="section">
     <h2 style="font-size:1.3rem; color:#c0d8f0; margin-bottom:1.2rem;">📅 Cronograma & Registro Semanal</h2>
@@ -688,13 +810,9 @@
       priorize classes gramaticais, uso do "que"/"se", conjunções e regência. Em Direito, cobra literalidade da lei.
     </div>
 
-    <!-- Seletor de semanas -->
     <div class="week-selector" id="week-selector"></div>
-
-    <!-- Conteúdo da semana -->
     <div class="card" id="week-content"></div>
 
-    <!-- Registro da semana -->
     <div class="card">
       <h3>🗒️ Registro de Anotações da Semana</h3>
       <textarea
@@ -985,8 +1103,8 @@ function loadState() {
     pomodoros: 0,
     pomoCycle: 1,
     memories: [],
-    sessions: {},        // { "w1_d0_manha": true, ... }
-    weekNotes: {},       // { "w1": "texto..." }
+    sessions: {},
+    weekNotes: {},
     currentWeek: 'w1'
   };
 }
@@ -996,7 +1114,85 @@ function saveState() {
 let state = loadState();
 
 /* ================================================================
-   DADOS DAS SEMANAS (CRONOGRAMA)
+   CONTADOR REGRESSIVO PARA A PROVA
+   ================================================================
+   ⚠️ A data da prova está definida abaixo. Se o edital mudar
+   a data, basta atualizar a variável DATA_PROVA.
+   ================================================================ */
+// Prova prevista: 20/12/2026 (domingo), no período da manhã.
+// Definimos 08:00 como horário de referência (início previsto).
+const DATA_PROVA = new Date('2026-12-20T08:00:00-03:00');
+
+function updateCountdown() {
+  const agora = new Date();
+  const diffMs = DATA_PROVA - agora;
+
+  const cdDays = document.getElementById('cd-days');
+  const cdUnit = document.getElementById('cd-days-unit');
+  const cdDate = document.getElementById('cd-date');
+  const cdHours = document.getElementById('cd-hours');
+  const cdMinutes = document.getElementById('cd-minutes');
+  const cdSeconds = document.getElementById('cd-seconds');
+  const cdMsg = document.getElementById('cd-message');
+
+  // Data formatada para exibir
+  const dataFormatada = DATA_PROVA.toLocaleDateString('pt-BR', {
+    weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
+  });
+  const horaFormatada = DATA_PROVA.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+  if (diffMs <= 0) {
+    // Prova já aconteceu
+    cdDays.textContent = '0';
+    cdUnit.textContent = 'dias';
+    cdHours.textContent = '00';
+    cdMinutes.textContent = '00';
+    cdSeconds.textContent = '00';
+    cdDate.innerHTML = `Prova realizada em <strong>${dataFormatada}</strong>`;
+    cdMsg.textContent = '🎉 A prova já foi realizada. Boa sorte com o resultado!';
+    cdMsg.className = 'cd-message done';
+    return;
+  }
+
+  const totalSegundos = Math.floor(diffMs / 1000);
+  const dias = Math.floor(totalSegundos / 86400);
+  const horas = Math.floor((totalSegundos % 86400) / 3600);
+  const minutos = Math.floor((totalSegundos % 3600) / 60);
+  const segundos = totalSegundos % 60;
+
+  cdDays.textContent = dias;
+  cdUnit.textContent = dias === 1 ? 'dia' : 'dias';
+  cdHours.textContent = String(horas).padStart(2, '0');
+  cdMinutes.textContent = String(minutos).padStart(2, '0');
+  cdSeconds.textContent = String(segundos).padStart(2, '0');
+  cdDate.innerHTML = `📅 Prova em <strong>${dataFormatada}</strong> às <strong>${horaFormatada}</strong>`;
+
+  // Mensagem dinâmica baseada no tempo restante
+  if (dias > 60) {
+    cdMsg.textContent = '💪 Ainda há tempo — mantenha o ritmo constante de estudos.';
+    cdMsg.className = 'cd-message';
+  } else if (dias > 30) {
+    cdMsg.textContent = '⚡ Reta intermediária: acelere as revisões e simulados.';
+    cdMsg.className = 'cd-message';
+  } else if (dias > 14) {
+    cdMsg.textContent = '🔥 Fase final se aproximando: priorize revisão e questões.';
+    cdMsg.className = 'cd-message urgent';
+  } else if (dias > 7) {
+    cdMsg.textContent = '🚨 Última quinzena: foque nos pontos fracos e simulados completos.';
+    cdMsg.className = 'cd-message urgent';
+  } else if (dias > 0) {
+    cdMsg.textContent = '⏰ Semana da prova: revise o caderno de erros e descanse bem.';
+    cdMsg.className = 'cd-message urgent';
+  }
+}
+
+// Atualiza a cada segundo
+setInterval(updateCountdown, 1000);
+// Chama imediatamente para não esperar 1s
+updateCountdown();
+
+/* ================================================================
+   DADOS DAS SEMANAS
    ================================================================ */
 const SUBJECT_TAGS = {
   'Português': 'tag-port',
@@ -1009,9 +1205,7 @@ const SUBJECT_TAGS = {
 
 const weeksData = [
   {
-    id: 'w1',
-    label: 'Semana 1',
-    period: '05/10 – 11/10',
+    id: 'w1', label: 'Semana 1', period: '05/10 – 11/10',
     days: [
       { name: 'Domingo', sessions: { manha: ['Português','Revisão'], tarde: ['Adm. Pública','Específicos'], noite: ['Simulado','Revisão'] } },
       { name: 'Segunda', sessions: { manha: ['Português','Informática'], tarde: ['Específicos','Adm. Pública'], noite: ['Português','Revisão'] } },
@@ -1023,9 +1217,7 @@ const weeksData = [
     ]
   },
   {
-    id: 'w2',
-    label: 'Semana 2',
-    period: '12/10 – 18/10',
+    id: 'w2', label: 'Semana 2', period: '12/10 – 18/10',
     days: [
       { name: 'Domingo', sessions: { manha: ['Português','Revisão'], tarde: ['Específicos','Adm. Pública'], noite: ['Simulado','Revisão'] } },
       { name: 'Segunda', sessions: { manha: ['Adm. Pública','Informática'], tarde: ['Português','Específicos'], noite: ['Adm. Pública','Revisão'] } },
@@ -1037,9 +1229,7 @@ const weeksData = [
     ]
   },
   {
-    id: 'w3',
-    label: 'Semana 3',
-    period: '19/10 – 25/10',
+    id: 'w3', label: 'Semana 3', period: '19/10 – 25/10',
     days: [
       { name: 'Domingo', sessions: { manha: ['Português','Revisão'], tarde: ['Adm. Pública','Específicos'], noite: ['Simulado','Revisão'] } },
       { name: 'Segunda', sessions: { manha: ['Específicos','Informática'], tarde: ['Português','Adm. Pública'], noite: ['Português','Revisão'] } },
@@ -1051,9 +1241,7 @@ const weeksData = [
     ]
   },
   {
-    id: 'w4',
-    label: 'Semana 4',
-    period: '26/10 – 01/11',
+    id: 'w4', label: 'Semana 4', period: '26/10 – 01/11',
     days: [
       { name: 'Domingo', sessions: { manha: ['Português','Revisão'], tarde: ['Específicos','Adm. Pública'], noite: ['Simulado','Revisão'] } },
       { name: 'Segunda', sessions: { manha: ['Adm. Pública','Informática'], tarde: ['Português','Específicos'], noite: ['Adm. Pública','Revisão'] } },
@@ -1065,9 +1253,6 @@ const weeksData = [
     ]
   }
 ];
-
-const WEEK_SESSION_TOTAL = weeksData.reduce((acc, w) =>
-  acc + w.days.reduce((a, d) => a + Object.keys(d.sessions).length, 0), 0);
 
 function getWeekSessionCount(weekId) {
   const w = weeksData.find(x => x.id === weekId);
@@ -1089,7 +1274,7 @@ function isWeekComplete(weekId) {
 }
 
 /* ================================================================
-   RENDER: SELETOR DE SEMANAS
+   RENDER SEMANAS
    ================================================================ */
 function renderWeekSelector() {
   const sel = document.getElementById('week-selector');
@@ -1114,9 +1299,6 @@ function renderWeekSelector() {
   });
 }
 
-/* ================================================================
-   RENDER: CONTEÚDO DA SEMANA
-   ================================================================ */
 function renderWeekContent() {
   const week = weeksData.find(x => x.id === state.currentWeek) || weeksData[0];
   const { done, total } = getWeekSessionCount(week.id);
@@ -1147,7 +1329,6 @@ function renderWeekContent() {
     const dayCard = document.createElement('div');
     dayCard.className = 'day-card';
 
-    // Contagem do dia
     let dayDone = 0, dayTotal = 0;
     Object.keys(day.sessions).forEach(p => {
       dayTotal++;
@@ -1189,26 +1370,17 @@ function renderWeekContent() {
     grid.appendChild(dayCard);
   });
 
-  // Carregar anotações
   document.getElementById('week-notes-textarea').value = state.weekNotes[week.id] || '';
 }
 
-/* ================================================================
-   TOGGLE SESSÃO
-   ================================================================ */
 function toggleSession(key, checkbox) {
-  if (checkbox.checked) {
-    state.sessions[key] = true;
-  } else {
-    delete state.sessions[key];
-  }
+  if (checkbox.checked) state.sessions[key] = true;
+  else delete state.sessions[key];
   saveState();
 
-  // Atualiza visual do label
   const label = checkbox.closest('.session-block');
   if (label) label.classList.toggle('checked', checkbox.checked);
 
-  // Atualiza cabeçalho e dia
   renderWeekSelector();
   updateDayCounters();
   updateDashboard();
@@ -1236,7 +1408,6 @@ function updateDayCounters() {
     card.classList.toggle('complete', dDone === dTotal && dTotal > 0);
   });
 
-  // Atualiza cabeçalho
   const { done, total } = getWeekSessionCount(week.id);
   const pct = total > 0 ? Math.round((done/total)*100) : 0;
   const statsEl = document.querySelector('#week-content .week-stats');
@@ -1250,9 +1421,6 @@ function updateDayCounters() {
   if (bar) bar.style.width = pct + '%';
 }
 
-/* ================================================================
-   MARCAR / DESMARCAR SEMANA INTEIRA
-   ================================================================ */
 function markAllWeek(value) {
   const week = weeksData.find(x => x.id === state.currentWeek);
   if (!week) return;
@@ -1270,9 +1438,6 @@ function markAllWeek(value) {
   toast(value ? '✅ Semana toda marcada!' : '🔄 Semana desmarcada.');
 }
 
-/* ================================================================
-   ANOTAÇÕES DA SEMANA
-   ================================================================ */
 function saveWeekNotes() {
   const txt = document.getElementById('week-notes-textarea').value;
   state.weekNotes[state.currentWeek] = txt;
@@ -1291,10 +1456,9 @@ function clearWeekNotes() {
 }
 
 /* ================================================================
-   DASHBOARD — ATUALIZAÇÃO
+   DASHBOARD
    ================================================================ */
 function updateDashboard() {
-  // Progresso do edital
   const allTopics = document.querySelectorAll('.topics li');
   const totalTopics = allTopics.length;
   const doneTopics = document.querySelectorAll('.topics li.done').length;
@@ -1302,7 +1466,6 @@ function updateDashboard() {
   document.getElementById('stat-progress').textContent = pct + '%';
   document.getElementById('prog-fill').style.width = pct + '%';
 
-  // Sessões da semana atual
   const current = state.currentWeek;
   const { done, total } = getWeekSessionCount(current);
   const sessPct = total > 0 ? Math.round((done/total)*100) : 0;
@@ -1311,17 +1474,14 @@ function updateDashboard() {
     `${weeksData.find(w => w.id === current).label} · ${sessPct}%`;
   document.getElementById('sessoes-fill').style.width = sessPct + '%';
 
-  // Semanas finalizadas
   const completedWeeks = weeksData.filter(w => isWeekComplete(w.id)).length;
   document.getElementById('stat-semanas').textContent = completedWeeks;
 
-  // Simulados
   document.getElementById('stat-acertos').textContent = state.simAcertos;
   document.getElementById('stat-erros').textContent = state.simErros;
   document.getElementById('stat-sim-total').textContent = state.simTotal + ' questões respondidas';
   document.getElementById('stat-pomodoros').textContent = state.pomodoros;
 
-  // Progresso semanal detalhado
   const wpDiv = document.getElementById('weekly-progress');
   wpDiv.innerHTML = '';
   weeksData.forEach(w => {
@@ -1343,7 +1503,6 @@ function updateDashboard() {
     `;
   });
 
-  // Desempenho por disciplina
   const discMap = {
     'portugues': 'Língua Portuguesa',
     'informatica': 'Noções de Informática',
@@ -1367,7 +1526,6 @@ function updateDashboard() {
       </div>`;
   }
 
-  // Registro da semana atual no dashboard
   const cw = weeksData.find(w => w.id === current);
   const notes = state.weekNotes[current];
   const regDiv = document.getElementById('current-week-register');
@@ -1641,6 +1799,7 @@ function init() {
   ['sim1','sim2','sim3','sim4'].forEach(renderSimulado);
   updatePomoDisplay();
   renderMemories();
+  updateCountdown();
 
   document.querySelectorAll('#pomo-checklist input[type="checkbox"]').forEach(cb => {
     cb.addEventListener('change', function() {
