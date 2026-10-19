@@ -2,10 +2,12 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#0a0e17">
 <title>Dashboard UFBA · Assistente em Administração</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
   body {
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     background: #0a0e17;
@@ -13,23 +15,25 @@
     display: flex;
     min-height: 100vh;
     overflow-x: hidden;
+    font-size: 16px;
   }
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: #0a0e17; }
   ::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 4px; }
-  ::-webkit-scrollbar-thumb:hover { background: #2a5a8f; }
 
   /* ===== SIDEBAR ===== */
   .sidebar {
-    width: 250px;
+    width: 260px;
     background: linear-gradient(180deg, #0d1421 0%, #111a2e 100%);
     border-right: 1px solid #1a2a4a;
     padding: 1.5rem 0;
     position: fixed;
+    top: 0; left: 0;
     height: 100vh;
+    height: 100dvh;
     overflow-y: auto;
     z-index: 100;
-    transition: transform 0.3s;
+    transition: transform 0.3s ease;
   }
   .sidebar .logo {
     text-align: center;
@@ -49,28 +53,65 @@
   .nav-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 20px;
+    gap: 14px;
+    padding: 16px 20px;
     cursor: pointer;
     transition: all 0.2s;
     color: #8aa4c8;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     border-left: 3px solid transparent;
+    min-height: 52px;
+    user-select: none;
   }
-  .nav-item:hover { background: rgba(0, 212, 255, 0.05); color: #c0d8f0; }
+  .nav-item:hover, .nav-item:active { background: rgba(0, 212, 255, 0.08); color: #c0d8f0; }
   .nav-item.active {
-    background: rgba(0, 212, 255, 0.08);
+    background: rgba(0, 212, 255, 0.12);
     color: #00d4ff;
     border-left-color: #00d4ff;
   }
-  .nav-item .icon { font-size: 1.2rem; width: 24px; text-align: center; }
+  .nav-item .icon { font-size: 1.3rem; width: 28px; text-align: center; }
+
+  /* Overlay escuro no mobile */
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(2px);
+    z-index: 99;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .sidebar-overlay.active { display: block; opacity: 1; }
+
+  /* Botão hamburguer */
+  .menu-toggle {
+    display: none;
+    position: fixed;
+    top: 12px; left: 12px;
+    z-index: 101;
+    background: linear-gradient(135deg, #0d1421, #1a2a4a);
+    border: 1px solid #00d4ff44;
+    color: #c0d8f0;
+    font-size: 1.5rem;
+    padding: 10px 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    min-width: 48px;
+    min-height: 48px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
 
   /* ===== MAIN ===== */
   .main {
-    margin-left: 250px;
+    margin-left: 260px;
     flex: 1;
-    padding: 1.5rem 2rem 3rem;
+    padding: 1.5rem 2rem 4rem;
     max-width: 1300px;
+    width: 100%;
   }
 
   /* ===== CARDS ===== */
@@ -80,7 +121,6 @@
     border-radius: 16px;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
-    transition: all 0.3s;
     position: relative;
     overflow: hidden;
   }
@@ -92,9 +132,8 @@
     background: linear-gradient(90deg, #00d4ff, #7b2ff7, #ff2d95);
     opacity: 0.6;
   }
-  .card:hover { border-color: #2a4a7a; box-shadow: 0 8px 32px rgba(0, 212, 255, 0.06); }
   .card h3 {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     color: #5a9aff;
@@ -102,14 +141,15 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-wrap: wrap;
   }
 
-  /* ===== COUNTDOWN CARD ===== */
+  /* ===== COUNTDOWN ===== */
   .countdown-card {
     background: linear-gradient(135deg, #0f172a 0%, #1a1040 50%, #0f172a 100%);
     border: 1px solid #7b2ff766;
     border-radius: 18px;
-    padding: 1.8rem 1.5rem;
+    padding: 1.8rem 1.2rem;
     margin-bottom: 1.5rem;
     text-align: center;
     position: relative;
@@ -130,9 +170,9 @@
     100% { background-position: 200% 50%; }
   }
   .countdown-card .cd-label {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     text-transform: uppercase;
-    letter-spacing: 3px;
+    letter-spacing: 2.5px;
     color: #5a9aff;
     margin-bottom: 0.5rem;
     font-weight: 600;
@@ -158,15 +198,14 @@
   .countdown-card .cd-date {
     font-size: 0.85rem;
     color: #8aa4c8;
-    margin-top: 0.5rem;
+    margin-top: 0.6rem;
+    line-height: 1.5;
   }
   .countdown-card .cd-date strong { color: #00d4ff; }
-
-  /* Mini contadores */
   .cd-mini-grid {
     display: flex;
     justify-content: center;
-    gap: 1rem;
+    gap: 0.6rem;
     margin-top: 1.2rem;
     flex-wrap: wrap;
   }
@@ -174,12 +213,12 @@
     background: #0a1220;
     border: 1px solid #1a2a4a;
     border-radius: 12px;
-    padding: 0.7rem 1.1rem;
-    min-width: 80px;
+    padding: 0.7rem 0.9rem;
+    min-width: 72px;
     text-align: center;
   }
   .cd-mini .v {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 700;
     color: #00d4ff;
     font-variant-numeric: tabular-nums;
@@ -193,9 +232,10 @@
   }
   .cd-message {
     margin-top: 1rem;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     color: #8aa4c8;
     font-style: italic;
+    line-height: 1.5;
   }
   .cd-message.urgent { color: #ff2d95; font-weight: 600; }
   .cd-message.done { color: #00ff88; font-weight: 600; }
@@ -203,7 +243,7 @@
   /* ===== DASH GRID ===== */
   .dash-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 1rem;
     margin-bottom: 1.5rem;
   }
@@ -213,9 +253,7 @@
     border-radius: 14px;
     padding: 1.2rem;
     text-align: center;
-    transition: all 0.3s;
   }
-  .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0, 212, 255, 0.1); }
   .stat-card .value {
     font-size: 2rem;
     font-weight: 700;
@@ -253,13 +291,13 @@
     margin-bottom: 1.2rem;
   }
   .week-btn {
-    padding: 10px 18px;
-    border-radius: 10px;
+    padding: 12px 16px;
+    border-radius: 12px;
     border: 1px solid #1a2a4a;
     background: #0d1525;
     color: #8aa4c8;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     font-weight: 600;
     transition: all 0.2s;
     font-family: inherit;
@@ -268,22 +306,20 @@
     align-items: center;
     gap: 2px;
     min-width: 100px;
+    min-height: 60px;
+    flex: 1 1 auto;
+    user-select: none;
   }
-  .week-btn:hover { border-color: #00d4ff44; color: #c0d8f0; }
+  .week-btn:active { transform: scale(0.97); }
   .week-btn.active {
     border-color: #00d4ff;
     color: #00d4ff;
     background: rgba(0,212,255,0.08);
     box-shadow: 0 0 20px rgba(0,212,255,0.15);
   }
-  .week-btn .wb-label { font-size: 0.85rem; }
-  .week-btn .wb-period { font-size: 0.65rem; color: #5a7a9f; font-weight: 400; }
-  .week-btn .wb-progress {
-    font-size: 0.65rem;
-    color: #3a8f5a;
-    font-weight: 700;
-    margin-top: 2px;
-  }
+  .week-btn .wb-label { font-size: 0.88rem; }
+  .week-btn .wb-period { font-size: 0.68rem; color: #5a7a9f; font-weight: 400; }
+  .week-btn .wb-progress { font-size: 0.68rem; color: #3a8f5a; font-weight: 700; margin-top: 2px; }
   .week-btn.active .wb-progress { color: #00ff88; }
 
   /* ===== WEEK HEADER ===== */
@@ -299,7 +335,7 @@
   }
   .week-header h3 { margin: 0; }
   .week-header .week-stats {
-    font-size: 0.75rem;
+    font-size: 0.78rem;
     color: #8aa4c8;
     display: flex;
     gap: 1rem;
@@ -318,23 +354,21 @@
     border: 1px solid #1a2a4a;
     border-radius: 14px;
     padding: 1rem;
-    transition: all 0.3s;
   }
-  .day-card:hover { border-color: #2a4a7a; }
   .day-card.complete { border-color: #00d4ff55; background: linear-gradient(135deg, #0d1525, #0f1f35); }
   .day-card .day-title {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     font-weight: 700;
     color: #c0d8f0;
     margin-bottom: 0.8rem;
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.6rem;
     border-bottom: 1px solid #1a2a4a;
   }
   .day-card .day-title .day-progress {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: #5a7a9f;
     font-weight: 400;
   }
@@ -342,22 +376,24 @@
 
   .session-block {
     display: flex;
-    gap: 10px;
-    padding: 10px;
-    border-radius: 10px;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 12px;
     background: #0a1220;
     margin-bottom: 8px;
     cursor: pointer;
     transition: all 0.2s;
     align-items: flex-start;
     border: 1px solid transparent;
+    min-height: 60px;
+    user-select: none;
   }
-  .session-block:hover { background: #101a30; border-color: #2a4a7a; }
+  .session-block:active { transform: scale(0.99); }
   .session-block.checked { background: linear-gradient(135deg, #0a2a1a, #0d2035); border-color: #00d4ff44; }
   .session-block.checked .session-label { color: #00ff88; text-decoration: line-through; }
   .session-block.checked .session-tags .subject-tag { opacity: 0.55; }
   .session-block input[type="checkbox"] {
-    width: 20px; height: 20px;
+    width: 24px; height: 24px;
     accent-color: #00d4ff;
     cursor: pointer;
     flex-shrink: 0;
@@ -365,19 +401,19 @@
   }
   .session-content { flex: 1; }
   .session-label {
-    font-size: 0.72rem;
+    font-size: 0.78rem;
     text-transform: uppercase;
     letter-spacing: 1px;
     color: #5a9aff;
     font-weight: 700;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
   .session-tags { display: flex; flex-wrap: wrap; gap: 4px; }
   .subject-tag {
     display: inline-block;
-    padding: 2px 8px;
+    padding: 3px 10px;
     border-radius: 12px;
-    font-size: 0.68rem;
+    font-size: 0.72rem;
     font-weight: 500;
   }
   .tag-port { background: #1a3a5f; color: #6ab0ff; }
@@ -394,43 +430,44 @@
     flex-wrap: wrap;
     margin-top: 1rem;
   }
+  .week-actions .btn { flex: 1 1 160px; }
 
   /* ===== NOTES ===== */
   .week-notes {
     width: 100%;
-    min-height: 100px;
+    min-height: 120px;
     background: #0a1220;
     border: 1px solid #1a2a4a;
     border-radius: 10px;
-    padding: 12px 16px;
+    padding: 14px 16px;
     color: #c0d8f0;
     font-family: inherit;
-    font-size: 0.82rem;
+    font-size: 0.92rem;
     line-height: 1.6;
     resize: vertical;
-    transition: border-color 0.2s;
   }
   .week-notes:focus { outline: none; border-color: #00d4ff; }
   .week-notes::placeholder { color: #3a5a7f; }
 
   /* ===== BUTTONS ===== */
   .btn {
-    padding: 10px 20px;
+    padding: 14px 22px;
     border: none;
-    border-radius: 10px;
-    font-size: 0.82rem;
+    border-radius: 12px;
+    font-size: 0.92rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
     font-family: inherit;
+    min-height: 48px;
+    user-select: none;
   }
+  .btn:active { transform: scale(0.97); }
   .btn-primary { background: linear-gradient(135deg, #00d4ff, #7b2ff7); color: #fff; }
-  .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
   .btn-secondary { background: #1a2a4a; color: #a0b8d8; }
-  .btn-secondary:hover { background: #2a3a5a; }
-  .btn-sm { padding: 6px 12px; font-size: 0.72rem; }
+  .btn-secondary:active { background: #2a3a5a; }
+  .btn-sm { padding: 10px 16px; font-size: 0.85rem; min-height: 44px; }
   .btn-success { background: linear-gradient(135deg, #00ff88, #00d4ff); color: #062018; }
-  .btn-success:hover { opacity: 0.85; }
 
   /* ===== DISC CARDS ===== */
   .disc-grid {
@@ -443,43 +480,46 @@
     border: 1px solid #1a2a4a;
     border-radius: 14px;
     padding: 1.2rem;
-    transition: all 0.3s;
   }
-  .disc-card:hover { border-color: #00d4ff33; background: #111d33; }
   .disc-card .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 0.8rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
-  .disc-card .header h4 { font-size: 0.9rem; color: #c0d8f0; }
+  .disc-card .header h4 { font-size: 0.95rem; color: #c0d8f0; }
   .disc-card .header .badge {
-    font-size: 0.65rem;
-    padding: 3px 10px;
+    font-size: 0.7rem;
+    padding: 4px 10px;
     border-radius: 20px;
     background: #1a2a4a;
     color: #5a9aff;
     font-weight: 600;
   }
-  .disc-card .topics { list-style: none; font-size: 0.78rem; color: #7a9abf; }
+  .disc-card .topics { list-style: none; font-size: 0.85rem; color: #7a9abf; }
   .disc-card .topics li {
-    padding: 4px 0;
+    padding: 10px 0;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 10px;
     cursor: pointer;
     transition: color 0.2s;
+    border-bottom: 1px solid #0f1a2e;
+    min-height: 44px;
+    user-select: none;
   }
-  .disc-card .topics li:hover { color: #c0d8f0; }
+  .disc-card .topics li:active { background: rgba(0,212,255,0.04); }
   .disc-card .topics li.done { color: #3a8f5a; text-decoration: line-through; }
   .disc-card .topics li .check {
-    width: 16px; height: 16px;
+    width: 22px; height: 22px;
     border: 1.5px solid #2a4a7a;
-    border-radius: 4px;
+    border-radius: 5px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.6rem;
+    font-size: 0.75rem;
     flex-shrink: 0;
     transition: all 0.2s;
   }
@@ -490,22 +530,33 @@
   }
 
   /* ===== TABS ===== */
-  .tabs { display: flex; gap: 4px; margin-bottom: 1rem; flex-wrap: wrap; }
-  .tab-btn {
-    padding: 8px 18px;
-    border: none;
-    border-radius: 8px;
-    background: transparent;
-    color: #5a7a9f;
-    cursor: pointer;
-    font-size: 0.8rem;
-    font-weight: 500;
-    transition: all 0.2s;
-    font-family: inherit;
-    border-bottom: 2px solid transparent;
+  .tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 1rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
   }
-  .tab-btn:hover { color: #a0b8d8; }
-  .tab-btn.active { color: #00d4ff; border-bottom-color: #00d4ff; }
+  .tabs::-webkit-scrollbar { height: 4px; }
+  .tab-btn {
+    padding: 12px 18px;
+    border: 1px solid #1a2a4a;
+    border-radius: 10px;
+    background: #0d1525;
+    color: #8aa4c8;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    font-family: inherit;
+    white-space: nowrap;
+    min-height: 44px;
+    user-select: none;
+  }
+  .tab-btn:active { transform: scale(0.97); }
+  .tab-btn.active { color: #00d4ff; border-color: #00d4ff; background: rgba(0,212,255,0.08); }
 
   /* ===== INFO BOX ===== */
   .info-box {
@@ -513,9 +564,9 @@
     border: 1px solid rgba(0, 212, 255, 0.15);
     border-radius: 12px;
     padding: 1rem 1.2rem;
-    font-size: 0.8rem;
+    font-size: 0.88rem;
     color: #8aa4c8;
-    line-height: 1.6;
+    line-height: 1.65;
     margin-bottom: 1rem;
   }
   .info-box strong { color: #00d4ff; }
@@ -525,7 +576,7 @@
   .section.active { display: block; }
 
   /* ===== POMODORO ===== */
-  .pomodoro-box { text-align: center; padding: 1.5rem; }
+  .pomodoro-box { text-align: center; padding: 1.5rem 0.5rem; }
   .pomodoro-timer {
     font-size: 4rem;
     font-weight: 700;
@@ -537,25 +588,29 @@
     margin: 0.5rem 0;
     letter-spacing: 4px;
   }
-  .pomodoro-label { font-size: 0.8rem; color: #5a7a9f; text-transform: uppercase; letter-spacing: 2px; }
+  .pomodoro-label { font-size: 0.85rem; color: #5a7a9f; text-transform: uppercase; letter-spacing: 2px; }
   .pomodoro-controls { display: flex; gap: 10px; justify-content: center; margin-top: 1rem; flex-wrap: wrap; }
+  .pomodoro-controls .btn { flex: 1 1 140px; }
 
   /* ===== MUSIC ===== */
-  .music-options { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .music-options { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1rem; }
   .music-btn {
-    padding: 8px 16px;
+    padding: 12px 16px;
     border-radius: 10px;
     border: 1px solid #1a2a4a;
     background: #0d1525;
     color: #8aa4c8;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     transition: all 0.2s;
     font-family: inherit;
+    min-height: 48px;
+    flex: 1 1 auto;
+    user-select: none;
   }
-  .music-btn:hover { border-color: #00d4ff44; color: #c0d8f0; }
+  .music-btn:active { transform: scale(0.97); }
   .music-btn.active { border-color: #00d4ff; color: #00d4ff; background: rgba(0,212,255,0.06); }
-  #yt-player iframe { border-radius: 12px; }
+  #yt-player iframe { border-radius: 12px; display: block; }
 
   /* ===== SIMULADO ===== */
   .simulado-question {
@@ -565,38 +620,43 @@
     padding: 1.2rem;
     margin-bottom: 1rem;
   }
-  .simulado-question .q-text { font-size: 0.85rem; color: #c0d8f0; margin-bottom: 0.8rem; line-height: 1.6; }
-  .simulado-question .q-options { display: flex; flex-direction: column; gap: 6px; }
+  .simulado-question .q-text { font-size: 0.92rem; color: #c0d8f0; margin-bottom: 0.9rem; line-height: 1.65; }
+  .simulado-question .q-options { display: flex; flex-direction: column; gap: 8px; }
   .simulado-question .q-option {
-    padding: 8px 14px;
-    border-radius: 8px;
+    padding: 12px 14px;
+    border-radius: 10px;
     background: #0a1220;
     border: 1px solid #1a2a4a;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 0.88rem;
     color: #a0b8d8;
     transition: all 0.2s;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    user-select: none;
   }
-  .simulado-question .q-option:hover { border-color: #2a4a7a; }
+  .simulado-question .q-option:active { transform: scale(0.99); }
   .simulado-question .q-option.correct { background: #0a2a1a; border-color: #00d4ff; color: #6aff8a; }
   .simulado-question .q-option.wrong { background: #2a0a1a; border-color: #ff2d55; color: #ff6a8a; }
-  .simulado-question .q-feedback { margin-top: 8px; font-size: 0.75rem; color: #5a9aff; display: none; }
+  .simulado-question .q-feedback { margin-top: 10px; font-size: 0.82rem; color: #5a9aff; display: none; line-height: 1.6; }
   .simulado-question .q-feedback.show { display: block; }
 
   /* ===== CHECKLIST ===== */
   .checklist-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 8px 12px;
-    border-radius: 8px;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: background 0.2s;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     color: #a0b8d8;
+    min-height: 48px;
+    user-select: none;
   }
-  .checklist-item:hover { background: rgba(0,212,255,0.04); }
-  .checklist-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: #00d4ff; cursor: pointer; }
+  .checklist-item:active { background: rgba(0,212,255,0.04); }
+  .checklist-item input[type="checkbox"] { width: 22px; height: 22px; accent-color: #00d4ff; cursor: pointer; }
   .checklist-item.checked { color: #3a8f5a; }
 
   /* ===== MEMORY ===== */
@@ -604,59 +664,130 @@
     background: #0d1525;
     border-left: 3px solid #7b2ff7;
     border-radius: 0 8px 8px 0;
-    padding: 0.8rem 1rem;
+    padding: 0.9rem 1rem;
     margin-bottom: 0.6rem;
-    font-size: 0.78rem;
+    font-size: 0.85rem;
     color: #8aa4c8;
+    line-height: 1.55;
+    word-wrap: break-word;
   }
-  .memory-entry .timestamp { font-size: 0.65rem; color: #3a5a7f; }
+  .memory-entry .timestamp { font-size: 0.7rem; color: #3a5a7f; }
+
+  /* ===== INPUTS ===== */
+  input[type="text"], select {
+    background: #0d1525;
+    color: #c0d8f0;
+    border: 1px solid #1a2a4a;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    min-height: 48px;
+    width: 100%;
+  }
+  input[type="text"]:focus, select:focus { outline: none; border-color: #00d4ff; }
 
   /* ===== TOAST ===== */
   .toast {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(120px);
     background: linear-gradient(135deg, #0f172a, #1a2a4a);
     border: 1px solid #00d4ff44;
     border-radius: 12px;
     padding: 14px 22px;
     color: #c0d8f0;
-    font-size: 0.82rem;
+    font-size: 0.88rem;
     box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     z-index: 9999;
-    transform: translateY(100px);
     opacity: 0;
     transition: all 0.3s;
     pointer-events: none;
+    max-width: 90vw;
+    text-align: center;
   }
-  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
   /* ===== FOOTER ===== */
   .footer {
     text-align: center;
     padding: 2rem 0 1rem;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: #3a5a7f;
     border-top: 1px solid #1a2a4a;
     margin-top: 2rem;
+    line-height: 1.5;
   }
 
   /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    .main { padding: 1.2rem 1rem 5rem; }
+  }
+
   @media (max-width: 768px) {
-    .sidebar { transform: translateX(-100%); width: 230px; }
+    body { font-size: 15px; }
+    .menu-toggle { display: flex; }
+    .sidebar {
+      transform: translateX(-100%);
+      width: 280px;
+      padding-top: 5rem;
+      box-shadow: 4px 0 24px rgba(0,0,0,0.5);
+    }
     .sidebar.open { transform: translateX(0); }
-    .main { margin-left: 0; padding: 1rem; }
-    .dash-grid { grid-template-columns: repeat(2, 1fr); }
-    .pomodoro-timer { font-size: 2.8rem; }
+    .main { margin-left: 0; padding: 4.5rem 0.9rem 5rem; max-width: 100%; }
+    .dash-grid { grid-template-columns: repeat(2, 1fr); gap: 0.7rem; }
+    .stat-card { padding: 0.9rem 0.6rem; }
+    .stat-card .value { font-size: 1.5rem; }
+    .stat-card .label { font-size: 0.65rem; }
+    .stat-card .sub { font-size: 0.62rem; }
+    .pomodoro-timer { font-size: 3rem; letter-spacing: 2px; }
     .day-grid { grid-template-columns: 1fr; }
-    .countdown-card .cd-days { font-size: 3.5rem; }
+    .countdown-card { padding: 1.4rem 0.8rem; }
+    .countdown-card .cd-days { font-size: 3.6rem; }
     .countdown-card .cd-days-unit { font-size: 1rem; }
-    .cd-mini { padding: 0.5rem 0.8rem; min-width: 60px; }
-    .cd-mini .v { font-size: 1.1rem; }
+    .cd-mini-grid { gap: 0.5rem; }
+    .cd-mini { padding: 0.5rem 0.7rem; min-width: 64px; }
+    .cd-mini .v { font-size: 1.15rem; }
+    .cd-mini .l { font-size: 0.55rem; letter-spacing: 1px; }
+    .week-selector { gap: 6px; }
+    .week-btn { min-width: 90px; padding: 10px 10px; flex: 1 1 calc(50% - 6px); }
+    .week-btn .wb-label { font-size: 0.8rem; }
+    .week-btn .wb-period { font-size: 0.62rem; }
+    .week-btn .wb-progress { font-size: 0.62rem; }
+    .card { padding: 1rem; border-radius: 14px; }
+    .card h3 { font-size: 0.85rem; letter-spacing: 1px; }
+    .main h2 { font-size: 1.15rem !important; }
+    .disc-grid { grid-template-columns: 1fr; }
+    .music-btn { flex: 1 1 calc(50% - 6px); }
+    .pomodoro-controls .btn { flex: 1 1 100%; }
+    .week-actions .btn { flex: 1 1 100%; }
+    .week-header { flex-direction: column; align-items: flex-start; }
+    .week-header h3 { font-size: 0.9rem; }
+    .info-box { font-size: 0.82rem; padding: 0.9rem 1rem; }
+  }
+
+  @media (max-width: 420px) {
+    .dash-grid { grid-template-columns: 1fr; }
+    .countdown-card .cd-days { font-size: 3rem; }
+    .music-btn { flex: 1 1 100%; }
+    .main { padding: 4.2rem 0.7rem 5rem; }
+    .tab-btn { font-size: 0.8rem; padding: 10px 14px; }
+  }
+
+  /* Ajuste para landscape em celular */
+  @media (max-width: 900px) and (orientation: landscape) {
+    .sidebar { padding-top: 1.5rem; }
   }
 </style>
 </head>
 <body>
+
+<!-- Overlay para fechar o menu no mobile -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- Botão hamburguer -->
+<button class="menu-toggle" id="menu-toggle" onclick="toggleSidebar()" aria-label="Abrir menu">☰</button>
 
 <!-- ===== SIDEBAR ===== -->
 <nav class="sidebar" id="sidebar">
@@ -696,28 +827,17 @@
   <section id="dashboard" class="section active">
     <h2 style="font-size:1.3rem; color:#c0d8f0; margin-bottom:1.2rem;">📊 Dashboard de Desempenho</h2>
 
-    <!-- CONTADOR REGRESSIVO PARA A PROVA -->
+    <!-- CONTADOR REGRESSIVO -->
     <div class="countdown-card" id="countdown-card">
       <div class="cd-label">⏳ Faltam para a prova</div>
       <div class="cd-days" id="cd-days">--</div>
       <div class="cd-days-unit" id="cd-days-unit">dias</div>
       <div class="cd-date" id="cd-date">Carregando...</div>
-
       <div class="cd-mini-grid">
-        <div class="cd-mini">
-          <div class="v" id="cd-hours">--</div>
-          <div class="l">Horas</div>
-        </div>
-        <div class="cd-mini">
-          <div class="v" id="cd-minutes">--</div>
-          <div class="l">Minutos</div>
-        </div>
-        <div class="cd-mini">
-          <div class="v" id="cd-seconds">--</div>
-          <div class="l">Segundos</div>
-        </div>
+        <div class="cd-mini"><div class="v" id="cd-hours">--</div><div class="l">Horas</div></div>
+        <div class="cd-mini"><div class="v" id="cd-minutes">--</div><div class="l">Minutos</div></div>
+        <div class="cd-mini"><div class="v" id="cd-seconds">--</div><div class="l">Segundos</div></div>
       </div>
-
       <div class="cd-message" id="cd-message"></div>
     </div>
 
@@ -737,47 +857,43 @@
       <div class="stat-card">
         <div class="value" id="stat-semanas">0</div>
         <div class="label">Semanas Finalizadas</div>
-        <div class="sub">de 4 semanas planejadas</div>
+        <div class="sub">de 4 semanas</div>
       </div>
       <div class="stat-card">
         <div class="value" id="stat-acertos">0</div>
         <div class="label">Acertos em Simulados</div>
-        <div class="sub" id="stat-sim-total">0 questões respondidas</div>
+        <div class="sub" id="stat-sim-total">0 questões</div>
       </div>
       <div class="stat-card">
         <div class="value" id="stat-erros">0</div>
         <div class="label">Erros em Simulados</div>
-        <div class="sub">revisar estes temas</div>
+        <div class="sub">revisar temas</div>
       </div>
       <div class="stat-card">
         <div class="value" id="stat-pomodoros">0</div>
         <div class="label">Pomodoros</div>
-        <div class="sub">sessões concluídas</div>
+        <div class="sub">concluídos</div>
       </div>
     </div>
 
-    <!-- Progresso semanal -->
     <div class="card">
       <h3>📅 Progresso Semanal Detalhado</h3>
       <div id="weekly-progress"></div>
     </div>
 
-    <!-- Desempenho por disciplina -->
     <div class="card">
-      <h3>📈 Desempenho por Disciplina (Edital Verticalizado)</h3>
+      <h3>📈 Desempenho por Disciplina</h3>
       <div id="disc-performance"></div>
     </div>
 
-    <!-- Registro da semana atual -->
     <div class="card">
       <h3>🗒️ Registro da Semana Atual</h3>
-      <div id="current-week-register" style="font-size:0.82rem; color:#8aa4c8; line-height:1.7;"></div>
+      <div id="current-week-register" style="font-size:0.88rem; color:#8aa4c8; line-height:1.7;"></div>
     </div>
 
-    <!-- Metadados -->
     <div class="card">
       <h3>📌 Metadados do Concurso</h3>
-      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:0.8rem; font-size:0.8rem;">
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:0.8rem; font-size:0.85rem;">
         <div><span style="color:#5a7a9f;">Cargo:</span> <strong style="color:#c0d8f0;">Assistente em Administração (201)</strong></div>
         <div><span style="color:#5a7a9f;">Nível:</span> <strong style="color:#c0d8f0;">Médio – Classe D</strong></div>
         <div><span style="color:#5a7a9f;">Vagas:</span> <strong style="color:#c0d8f0;">94 (AC: 55 | PcD: 10 | PP: 22 | Ind: 3 | Qui: 2)</strong></div>
@@ -804,10 +920,8 @@
     <h2 style="font-size:1.3rem; color:#c0d8f0; margin-bottom:1.2rem;">📅 Cronograma & Registro Semanal</h2>
 
     <div class="info-box">
-      <strong>✅ Como usar:</strong> Escolha a semana, marque cada sessão estudada (Manhã / Tarde / Noite) e escreva
-      suas anotações no campo de registro. Tudo é salvo automaticamente e refletido no Dashboard.
-      <br><strong>📌 Estratégia Instituto Avalia:</strong> Português é a matéria mais "gramatiqueira" da banca —
-      priorize classes gramaticais, uso do "que"/"se", conjunções e regência. Em Direito, cobra literalidade da lei.
+      <strong>✅ Como usar:</strong> Escolha a semana, toque em cada sessão estudada (Manhã / Tarde / Noite) e escreva suas anotações no campo de registro. Tudo é salvo automaticamente.
+      <br><strong>📌 Estratégia Instituto Avalia:</strong> Português é a matéria mais "gramatiqueira" da banca — priorize classes gramaticais, uso do "que"/"se", conjunções e regência. Em Direito, cobra literalidade da lei.
     </div>
 
     <div class="week-selector" id="week-selector"></div>
@@ -819,8 +933,8 @@
         class="week-notes"
         id="week-notes-textarea"
         placeholder="Ex: Semana produtiva. Preciso revisar crase e concordância verbal. Consegui 18/20 no simulado de Português. Na próxima semana focar em licitações (Lei 14.133/2021)..."></textarea>
-      <div style="margin-top:0.8rem; display:flex; gap:8px; flex-wrap:wrap;">
-        <button class="btn btn-primary btn-sm" onclick="saveWeekNotes()">💾 Salvar Anotações</button>
+      <div style="margin-top:0.9rem; display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn btn-primary btn-sm" onclick="saveWeekNotes()">💾 Salvar</button>
         <button class="btn btn-secondary btn-sm" onclick="clearWeekNotes()">🗑️ Limpar</button>
       </div>
     </div>
@@ -832,7 +946,7 @@
   <section id="edital" class="section">
     <h2 style="font-size:1.3rem; color:#c0d8f0; margin-bottom:1.2rem;">📋 Edital Verticalizado</h2>
     <div class="info-box">
-      Clique nos tópicos para marcá-los como estudados. O progresso é salvo automaticamente no navegador.
+      Toque em cada tópico para marcá-lo como estudado. O progresso é salvo automaticamente no navegador.
     </div>
 
     <div class="disc-grid" id="edital-grid">
@@ -919,10 +1033,9 @@
   <!-- SIMULADOS -->
   <!-- ============================================================ -->
   <section id="simulados" class="section">
-    <h2 style="font-size:1.3rem; color:#c0d8f0; margin-bottom:1.2rem;">✏️ Simulados — Estilo Instituto Avalia</h2>
+    <h2 style="font-size:1.3rem; color:#c0d8f0; margin-bottom:1.2rem;">✏️ Simulados — Instituto Avalia</h2>
     <div class="info-box">
-      <strong>🎯 Estilo da banca:</strong> Questões de múltipla escolha com 5 alternativas, enunciados
-      claros e diretos em Português (foco gramatical), e contextualizados nos Específicos.
+      <strong>🎯 Estilo da banca:</strong> Múltipla escolha com 5 alternativas, enunciados claros e diretos em Português (foco gramatical), e contextualizados nos Específicos.
     </div>
 
     <div class="tabs">
@@ -938,7 +1051,7 @@
     <div id="sim4" class="simulado-container section"></div>
 
     <div style="text-align:center; margin-top:1.5rem;">
-      <button class="btn btn-secondary" onclick="resetSimulados()">🔄 Resetar Resultados dos Simulados</button>
+      <button class="btn btn-secondary" onclick="resetSimulados()">🔄 Resetar Simulados</button>
     </div>
   </section>
 
@@ -952,15 +1065,15 @@
       <div class="pomodoro-box">
         <div class="pomodoro-label" id="pomo-phase">FOCO</div>
         <div class="pomodoro-timer" id="pomo-display">25:00</div>
-        <div style="font-size:0.75rem; color:#3a5a7f; margin-bottom:0.5rem;">
-          Ciclo: <span id="pomo-cycle">1</span> · Pomodoros concluídos: <span id="pomo-count">0</span>
+        <div style="font-size:0.82rem; color:#3a5a7f; margin-bottom:0.5rem;">
+          Ciclo: <span id="pomo-cycle">1</span> · Pomodoros: <span id="pomo-count">0</span>
         </div>
         <div class="pomodoro-controls">
           <button class="btn btn-primary" id="pomo-start" onclick="togglePomodoro()">▶ Iniciar</button>
           <button class="btn btn-secondary" onclick="resetPomodoro()">↻ Resetar</button>
         </div>
-        <div style="margin-top:1.2rem; font-size:0.75rem; color:#3a5a7f;">
-          🎯 25 min de foco · 5 min de pausa curta · 15 min de pausa longa a cada 4 ciclos
+        <div style="margin-top:1.2rem; font-size:0.8rem; color:#3a5a7f; line-height:1.6;">
+          🎯 25 min de foco · 5 min pausa curta · 15 min pausa longa a cada 4 ciclos
         </div>
       </div>
     </div>
@@ -986,32 +1099,32 @@
     <div class="card">
       <h3>▶ Player de Estudo</h3>
       <div class="music-options">
-        <button class="music-btn active" onclick="loadMusic('lofi', event)">🎧 Lofi Beats</button>
-        <button class="music-btn" onclick="loadMusic('chill', event)">🌧️ Som da Chuva</button>
-        <button class="music-btn" onclick="loadMusic('classical', event)">🎻 Clássica para Foco</button>
-        <button class="music-btn" onclick="loadMusic('binaural', event)">🧠 Frequências de Estudo</button>
-        <button class="music-btn" onclick="loadMusic('jazz', event)">🎷 Jazz Instrumental</button>
-        <button class="music-btn" onclick="loadMusic('nature', event)">🌿 Sons da Natureza</button>
+        <button class="music-btn active" onclick="loadMusic('lofi', event)">🎧 Lofi</button>
+        <button class="music-btn" onclick="loadMusic('chill', event)">🌧️ Chuva</button>
+        <button class="music-btn" onclick="loadMusic('classical', event)">🎻 Clássica</button>
+        <button class="music-btn" onclick="loadMusic('binaural', event)">🧠 Frequências</button>
+        <button class="music-btn" onclick="loadMusic('jazz', event)">🎷 Jazz</button>
+        <button class="music-btn" onclick="loadMusic('nature', event)">🌿 Natureza</button>
       </div>
       <div id="yt-player">
-        <iframe width="100%" height="180" src="https://www.youtube.com/embed/jfKfPfyJRdk" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <iframe width="100%" height="200" src="https://www.youtube.com/embed/jfKfPfyJRdk" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
       </div>
     </div>
 
     <div class="card">
       <h3>🧘 Pausas Programadas</h3>
-      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; font-size:0.8rem;">
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; font-size:0.88rem;">
         <div style="background:#0d1525; padding:1rem; border-radius:10px; border:1px solid #1a2a4a;">
           <strong style="color:#00d4ff;">Pausa Curta (5 min)</strong><br>
-          <span style="color:#7a9abf;">Levante-se, alongue o pescoço e os ombros, beba água. Evite redes sociais.</span>
+          <span style="color:#7a9abf;">Levante-se, alongue o pescoço e os ombros, beba água.</span>
         </div>
         <div style="background:#0d1525; padding:1rem; border-radius:10px; border:1px solid #1a2a4a;">
           <strong style="color:#7b2ff7;">Pausa Longa (15 min)</strong><br>
-          <span style="color:#7a9abf;">Caminhe um pouco, faça um lanche leve, feche os olhos por 5 minutos.</span>
+          <span style="color:#7a9abf;">Caminhe, faça um lanche leve, feche os olhos por 5 minutos.</span>
         </div>
         <div style="background:#0d1525; padding:1rem; border-radius:10px; border:1px solid #1a2a4a;">
           <strong style="color:#ff2d95;">Recuperação Mental</strong><br>
-          <span style="color:#7a9abf;">A cada 4 pomodoros, faça a pausa longa. Não pule as pausas — elas consolidam o aprendizado.</span>
+          <span style="color:#7a9abf;">A cada 4 pomodoros, faça a pausa longa. Não pule!</span>
         </div>
       </div>
     </div>
@@ -1021,35 +1134,34 @@
   <!-- MEMÓRIA -->
   <!-- ============================================================ -->
   <section id="memoria" class="section">
-    <h2 style="font-size:1.3rem; color:#c0d8f0; margin-bottom:1.2rem;">🧠 Caderno de Aprendizado Contínuo</h2>
+    <h2 style="font-size:1.3rem; color:#c0d8f0; margin-bottom:1.2rem;">🧠 Caderno de Aprendizado</h2>
 
     <div class="info-box">
-      <strong>🔗 Integração com IA (NotebookLM / outras):</strong> Registre insights, dúvidas e erros recorrentes.
-      Copie o conteúdo e cole no NotebookLM, ChatGPT ou qualquer IA para gerar resumos e mapas mentais.
+      <strong>🔗 Integração com IA (NotebookLM / ChatGPT):</strong> Registre insights, dúvidas e erros recorrentes. Copie o conteúdo e cole na IA para gerar resumos e mapas mentais.
     </div>
 
     <div class="card">
       <h3>📝 Registro de Insights e Erros</h3>
-      <div style="display:flex; gap:8px; margin-bottom:1rem; flex-wrap:wrap;">
-        <select id="memory-disc" style="flex:1; min-width:150px; padding:8px 12px; border-radius:8px; border:1px solid #1a2a4a; background:#0d1525; color:#c0d8f0; font-family:inherit; font-size:0.8rem;">
+      <div style="display:flex; gap:8px; margin-bottom:1rem; flex-direction:column;">
+        <select id="memory-disc">
           <option value="portugues">Português</option>
           <option value="informatica">Informática</option>
           <option value="admpublica">Adm. Pública</option>
           <option value="especificos">Específicos</option>
         </select>
-        <input type="text" id="memory-text" placeholder="Insight, dúvida ou erro..." style="flex:3; min-width:200px; padding:8px 14px; border-radius:8px; border:1px solid #1a2a4a; background:#0d1525; color:#c0d8f0; font-family:inherit; font-size:0.8rem;">
-        <button class="btn btn-primary btn-sm" onclick="addMemory()">+ Adicionar</button>
+        <input type="text" id="memory-text" placeholder="Insight, dúvida ou erro...">
+        <button class="btn btn-primary" onclick="addMemory()">+ Adicionar Insight</button>
       </div>
       <div id="memory-list"></div>
     </div>
 
     <div class="card">
       <h3>🔁 Sugestões de Revisão</h3>
-      <div style="font-size:0.8rem; color:#8aa4c8; line-height:1.8;">
-        <p>📌 <strong style="color:#00d4ff;">Revisão espaçada:</strong> Ao marcar um tópico como estudado, revise-o em 1, 7 e 30 dias.</p>
-        <p>📌 <strong style="color:#7b2ff7;">Mapas mentais:</strong> Para cada lei (8.112, 11.091, 14.133), crie um mapa com os artigos mais cobrados.</p>
-        <p>📌 <strong style="color:#ff2d95;">Questões comentadas:</strong> Use o caderno de erros para registrar o porquê de cada erro.</p>
-        <p>📌 <strong style="color:#d4d46a;">Simulados periódicos:</strong> 1 simulado completo por semana a partir de novembro.</p>
+      <div style="font-size:0.88rem; color:#8aa4c8; line-height:1.8;">
+        <p>📌 <strong style="color:#00d4ff;">Revisão espaçada:</strong> Revise em 1, 7 e 30 dias.</p>
+        <p>📌 <strong style="color:#7b2ff7;">Mapas mentais:</strong> Para cada lei (8.112, 11.091, 14.133), crie um mapa.</p>
+        <p>📌 <strong style="color:#ff2d95;">Questões comentadas:</strong> Use o caderno de erros.</p>
+        <p>📌 <strong style="color:#d4d46a;">Simulados:</strong> 1 completo por semana a partir de novembro.</p>
       </div>
     </div>
   </section>
@@ -1063,6 +1175,20 @@
 
 <script>
 /* ================================================================
+   SIDEBAR MOBILE
+   ================================================================ */
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('sidebar-overlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('active', sb.classList.contains('open'));
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('active');
+}
+
+/* ================================================================
    NAVEGAÇÃO
    ================================================================ */
 function showSection(id, el) {
@@ -1070,7 +1196,8 @@ function showSection(id, el) {
   document.getElementById(id).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   if (el) el.classList.add('active');
-  if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+  if (window.innerWidth <= 768) closeSidebar();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 /* ================================================================
@@ -1087,7 +1214,7 @@ function toast(msg) {
 /* ================================================================
    ESTADO
    ================================================================ */
-const STORAGE_KEY = 'ufba_assist_adm_v3';
+const STORAGE_KEY = 'ufba_assist_adm_v4';
 
 function loadState() {
   try {
@@ -1114,19 +1241,13 @@ function saveState() {
 let state = loadState();
 
 /* ================================================================
-   CONTADOR REGRESSIVO PARA A PROVA
-   ================================================================
-   ⚠️ A data da prova está definida abaixo. Se o edital mudar
-   a data, basta atualizar a variável DATA_PROVA.
+   CONTADOR REGRESSIVO
    ================================================================ */
-// Prova prevista: 20/12/2026 (domingo), no período da manhã.
-// Definimos 08:00 como horário de referência (início previsto).
 const DATA_PROVA = new Date('2026-12-20T08:00:00-03:00');
 
 function updateCountdown() {
   const agora = new Date();
   const diffMs = DATA_PROVA - agora;
-
   const cdDays = document.getElementById('cd-days');
   const cdUnit = document.getElementById('cd-days-unit');
   const cdDate = document.getElementById('cd-date');
@@ -1135,21 +1256,19 @@ function updateCountdown() {
   const cdSeconds = document.getElementById('cd-seconds');
   const cdMsg = document.getElementById('cd-message');
 
-  // Data formatada para exibir
   const dataFormatada = DATA_PROVA.toLocaleDateString('pt-BR', {
     weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
   });
   const horaFormatada = DATA_PROVA.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
   if (diffMs <= 0) {
-    // Prova já aconteceu
     cdDays.textContent = '0';
     cdUnit.textContent = 'dias';
     cdHours.textContent = '00';
     cdMinutes.textContent = '00';
     cdSeconds.textContent = '00';
     cdDate.innerHTML = `Prova realizada em <strong>${dataFormatada}</strong>`;
-    cdMsg.textContent = '🎉 A prova já foi realizada. Boa sorte com o resultado!';
+    cdMsg.textContent = '🎉 A prova já foi realizada. Boa sorte!';
     cdMsg.className = 'cd-message done';
     return;
   }
@@ -1165,30 +1284,26 @@ function updateCountdown() {
   cdHours.textContent = String(horas).padStart(2, '0');
   cdMinutes.textContent = String(minutos).padStart(2, '0');
   cdSeconds.textContent = String(segundos).padStart(2, '0');
-  cdDate.innerHTML = `📅 Prova em <strong>${dataFormatada}</strong> às <strong>${horaFormatada}</strong>`;
+  cdDate.innerHTML = `📅 <strong>${dataFormatada}</strong><br>às <strong>${horaFormatada}</strong>`;
 
-  // Mensagem dinâmica baseada no tempo restante
   if (dias > 60) {
-    cdMsg.textContent = '💪 Ainda há tempo — mantenha o ritmo constante de estudos.';
+    cdMsg.textContent = '💪 Ainda há tempo — mantenha o ritmo constante.';
     cdMsg.className = 'cd-message';
   } else if (dias > 30) {
-    cdMsg.textContent = '⚡ Reta intermediária: acelere as revisões e simulados.';
+    cdMsg.textContent = '⚡ Reta intermediária: acelere as revisões.';
     cdMsg.className = 'cd-message';
   } else if (dias > 14) {
-    cdMsg.textContent = '🔥 Fase final se aproximando: priorize revisão e questões.';
+    cdMsg.textContent = '🔥 Fase final: priorize revisão e questões.';
     cdMsg.className = 'cd-message urgent';
   } else if (dias > 7) {
-    cdMsg.textContent = '🚨 Última quinzena: foque nos pontos fracos e simulados completos.';
+    cdMsg.textContent = '🚨 Última quinzena: foque nos pontos fracos.';
     cdMsg.className = 'cd-message urgent';
   } else if (dias > 0) {
-    cdMsg.textContent = '⏰ Semana da prova: revise o caderno de erros e descanse bem.';
+    cdMsg.textContent = '⏰ Semana da prova: revise o caderno de erros.';
     cdMsg.className = 'cd-message urgent';
   }
 }
-
-// Atualiza a cada segundo
 setInterval(updateCountdown, 1000);
-// Chama imediatamente para não esperar 1s
 updateCountdown();
 
 /* ================================================================
@@ -1287,7 +1402,7 @@ function renderWeekSelector() {
     btn.innerHTML = `
       <span class="wb-label">${w.label} ${complete ? '✅' : ''}</span>
       <span class="wb-period">${w.period}</span>
-      <span class="wb-progress">${done}/${total} sessões</span>
+      <span class="wb-progress">${done}/${total}</span>
     `;
     btn.onclick = () => {
       state.currentWeek = w.id;
@@ -1318,8 +1433,8 @@ function renderWeekContent() {
     </div>
     <div class="day-grid" id="day-grid"></div>
     <div class="week-actions">
-      <button class="btn btn-success btn-sm" onclick="markAllWeek(true)">✅ Marcar semana toda</button>
-      <button class="btn btn-secondary btn-sm" onclick="markAllWeek(false)">🔄 Desmarcar semana</button>
+      <button class="btn btn-success btn-sm" onclick="markAllWeek(true)">✅ Marcar semana</button>
+      <button class="btn btn-secondary btn-sm" onclick="markAllWeek(false)">🔄 Desmarcar</button>
     </div>
   `;
 
@@ -1479,7 +1594,7 @@ function updateDashboard() {
 
   document.getElementById('stat-acertos').textContent = state.simAcertos;
   document.getElementById('stat-erros').textContent = state.simErros;
-  document.getElementById('stat-sim-total').textContent = state.simTotal + ' questões respondidas';
+  document.getElementById('stat-sim-total').textContent = state.simTotal + ' questões';
   document.getElementById('stat-pomodoros').textContent = state.pomodoros;
 
   const wpDiv = document.getElementById('weekly-progress');
@@ -1490,7 +1605,7 @@ function updateDashboard() {
     const complete = done === total && total > 0;
     wpDiv.innerHTML += `
       <div style="margin-bottom:1rem; padding:0.8rem; background:#0a1220; border-radius:10px; border:1px solid ${complete ? '#00d4ff44' : '#1a2a4a'};">
-        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.82rem; color:#a0b8d8; margin-bottom:6px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; color:#a0b8d8; margin-bottom:6px; flex-wrap:wrap; gap:4px;">
           <span>
             <strong style="color:${complete ? '#00ff88' : '#c0d8f0'};">${w.label}</strong>
             <span style="color:#5a7a9f; font-size:0.72rem;"> · ${w.period}</span>
@@ -1517,8 +1632,8 @@ function updateDashboard() {
     const t = topics.length;
     const p = t > 0 ? Math.round((d/t)*100) : 0;
     perfDiv.innerHTML += `
-      <div style="margin-bottom:0.8rem;">
-        <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#a0b8d8;">
+      <div style="margin-bottom:0.9rem;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#a0b8d8;">
           <span>${label}</span>
           <span>${d}/${t} · ${p}%</span>
         </div>
@@ -1533,14 +1648,14 @@ function updateDashboard() {
     regDiv.innerHTML = `
       <p style="margin-bottom:0.6rem;">
         <strong style="color:#00d4ff;">${cw.label} · ${cw.period}</strong>
-        <span style="color:#5a7a9f; font-size:0.75rem;"> — ${done}/${total} sessões concluídas</span>
+        <span style="color:#5a7a9f; font-size:0.78rem;"> — ${done}/${total} sessões</span>
       </p>
-      <div style="background:#0a1220; padding:1rem; border-radius:10px; border-left:3px solid #7b2ff7; white-space:pre-wrap; font-size:0.78rem; color:#a0b8d8;">${escapeHtml(notes)}</div>
+      <div style="background:#0a1220; padding:1rem; border-radius:10px; border-left:3px solid #7b2ff7; white-space:pre-wrap; font-size:0.85rem; color:#a0b8d8;">${escapeHtml(notes)}</div>
     `;
   } else {
     regDiv.innerHTML = `
-      <p>Nenhuma anotação registrada para <strong style="color:#00d4ff;">${cw.label}</strong> ainda.</p>
-      <p style="margin-top:0.5rem; font-size:0.75rem; color:#5a7a9f;">Vá em <em>Cronograma & Registro</em> e escreva suas anotações da semana.</p>
+      <p>Nenhuma anotação para <strong style="color:#00d4ff;">${cw.label}</strong> ainda.</p>
+      <p style="margin-top:0.5rem; font-size:0.8rem; color:#5a7a9f;">Vá em <em>Cronograma & Registro</em> e escreva suas anotações.</p>
     `;
   }
 }
@@ -1570,7 +1685,7 @@ document.querySelectorAll('.disc-card .topics li').forEach(li => {
    ================================================================ */
 const simulados = {
   sim1: {
-    titulo: 'Simulado 1 — Língua Portuguesa (Estilo Instituto Avalia)',
+    titulo: 'Simulado 1 — Língua Portuguesa',
     questoes: [
       { q: 'Assinale a alternativa em que o uso da crase está CORRETO:', opts: ['Entreguei o documento à ele.','Refiro-me à pessoas honestas.','Cheguei à Salvador ontem.','Obedeço à normas estabelecidas.','Fui à Bahia nas férias.'], correta: 4, explicacao: 'Usa-se crase antes de nome de lugar feminino que admite artigo "a" (Fui à Bahia).' },
       { q: 'Na frase "O aluno que estudou foi aprovado", a partícula "que" exerce função de:', opts: ['Conjunção integrante','Pronome relativo','Conjunção causal','Partícula expletiva','Advérbio de intensidade'], correta: 1, explicacao: 'Retoma o antecedente "aluno" → pronome relativo.' },
@@ -1580,7 +1695,7 @@ const simulados = {
     ]
   },
   sim2: {
-    titulo: 'Simulado 2 — Administração Pública (Foco em Lei Seca)',
+    titulo: 'Simulado 2 — Administração Pública',
     questoes: [
       { q: 'Conforme a Lei 8.112/1990, a investidura em cargo público ocorrerá com a:', opts: ['Nomeação','Posse','Exercício','Homologação','Lotação'], correta: 1, explicacao: 'Art. 7º: investidura = posse.' },
       { q: 'São formas de provimento de cargo público, EXCETO:', opts: ['Nomeação','Promoção','Readaptação','Transferência','Reintegração'], correta: 3, explicacao: 'Transferência não é forma de provimento (art. 8º).' },
@@ -1754,7 +1869,7 @@ function loadMusic(type, ev) {
   const url = musicUrls[type];
   if (!url) return;
   document.getElementById('yt-player').innerHTML =
-    `<iframe width="100%" height="180" src="${url}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+    `<iframe width="100%" height="200" src="${url}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
   document.querySelectorAll('.music-btn').forEach(b => b.classList.remove('active'));
   if (ev && ev.target) ev.target.classList.add('active');
   toast('🎵 Música carregada!');
@@ -1777,7 +1892,7 @@ function addMemory() {
 function renderMemories() {
   const list = document.getElementById('memory-list');
   if (state.memories.length === 0) {
-    list.innerHTML = '<div style="font-size:0.8rem; color:#3a5a7f; padding:0.5rem;">Nenhum registro ainda. Adicione insights, dúvidas ou erros recorrentes.</div>';
+    list.innerHTML = '<div style="font-size:0.85rem; color:#3a5a7f; padding:0.5rem;">Nenhum registro ainda. Adicione insights, dúvidas ou erros recorrentes.</div>';
     return;
   }
   const discLabels = { portugues:'Português', informatica:'Informática', admpublica:'Adm. Pública', especificos:'Específicos' };
@@ -1808,26 +1923,6 @@ function init() {
   });
 }
 init();
-
-/* ================================================================
-   MOBILE
-   ================================================================ */
-document.addEventListener('click', (e) => {
-  if (window.innerWidth <= 768) {
-    const sidebar = document.getElementById('sidebar');
-    if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && !e.target.closest('.nav-item')) {
-      sidebar.classList.remove('open');
-    }
-  }
-});
-
-if (window.innerWidth <= 768) {
-  const btn = document.createElement('button');
-  btn.innerHTML = '☰';
-  btn.style.cssText = 'position:fixed; top:12px; left:12px; z-index:200; background:#0d1421; border:1px solid #1a2a4a; color:#c0d8f0; font-size:1.4rem; padding:6px 12px; border-radius:8px; cursor:pointer;';
-  btn.onclick = () => document.getElementById('sidebar').classList.toggle('open');
-  document.body.appendChild(btn);
-}
 </script>
 </body>
 </html>
