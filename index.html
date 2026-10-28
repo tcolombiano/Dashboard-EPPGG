@@ -111,7 +111,6 @@
     width: 100%;
   }
 
-  /* ===== CARDS ===== */
   .card {
     background: linear-gradient(135deg, #0f172a 0%, #141f38 100%);
     border: 1px solid #1a2a4a;
@@ -380,6 +379,67 @@
     font-weight: 500;
   }
 
+  /* BOTÃO DE MARCAR CONSTÂNCIA */
+  .streak-mark-btn {
+    display: block;
+    margin: 1.2rem auto 0;
+    padding: 16px 28px;
+    background: linear-gradient(135deg, #ff6a00, #ff2d95);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    min-height: 56px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 4px 24px rgba(255, 45, 149, 0.45);
+    letter-spacing: 0.5px;
+    user-select: none;
+  }
+  .streak-mark-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 28px rgba(255, 45, 149, 0.6);
+  }
+  .streak-mark-btn:active { transform: scale(0.97); }
+  .streak-mark-btn.marked, .streak-mark-btn:disabled {
+    background: linear-gradient(135deg, #0a2a1a, #1a2a4a);
+    color: #6aff8a;
+    cursor: not-allowed;
+    box-shadow: none;
+    border: 1px solid #00ff8866;
+  }
+
+  /* BOTÃO DE RESETAR CONSTÂNCIA (discreto, protegido por senha) */
+  .streak-reset-btn {
+    display: block;
+    margin: 0.8rem auto 0;
+    padding: 10px 20px;
+    background: transparent;
+    color: #8a5a7a;
+    border: 1px solid #3a1a2a;
+    border-radius: 10px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    min-height: 42px;
+    width: 100%;
+    max-width: 420px;
+    letter-spacing: 0.3px;
+    user-select: none;
+  }
+  .streak-reset-btn:hover {
+    color: #ff2d95;
+    border-color: #ff2d9566;
+    background: rgba(255, 45, 149, 0.06);
+  }
+  .streak-reset-btn:active { transform: scale(0.98); }
+
   /* ===== DASH GRID ===== */
   .dash-grid {
     display: grid;
@@ -405,7 +465,6 @@
   .stat-card .label { font-size: 0.72rem; color: #5a7a9f; margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
   .stat-card .sub { font-size: 0.7rem; color: #3a5a7f; margin-top: 2px; }
 
-  /* ===== PROGRESS ===== */
   .progress-bar {
     width: 100%;
     height: 8px;
@@ -462,7 +521,6 @@
   .week-btn .wb-progress { font-size: 0.68rem; color: #3a8f5a; font-weight: 700; margin-top: 2px; }
   .week-btn.active .wb-progress { color: #00ff88; }
 
-  /* ===== WEEK HEADER ===== */
   .week-header {
     display: flex;
     justify-content: space-between;
@@ -483,7 +541,6 @@
   }
   .week-header .week-stats span strong { color: #00d4ff; }
 
-  /* ===== DAY CARDS ===== */
   .day-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -587,7 +644,6 @@
   .week-notes:focus { outline: none; border-color: #00d4ff; }
   .week-notes::placeholder { color: #3a5a7f; }
 
-  /* ===== BUTTONS ===== */
   .btn {
     padding: 14px 22px;
     border: none;
@@ -881,6 +937,8 @@
     .streak-stat { padding: 0.5rem 0.8rem; min-width: 70px; }
     .streak-stat-num { font-size: 1.2rem; }
     .heatmap-day { width: 14px; height: 14px; }
+    .streak-mark-btn { font-size: 0.9rem; padding: 14px 20px; min-height: 52px; }
+    .streak-reset-btn { font-size: 0.72rem; padding: 9px 16px; }
     .week-selector { gap: 6px; }
     .week-btn { min-width: 90px; padding: 10px 10px; flex: 1 1 calc(50% - 6px); }
     .week-btn .wb-label { font-size: 0.8rem; }
@@ -906,6 +964,8 @@
     .main { padding: 4.2rem 0.7rem 5rem; }
     .tab-btn { font-size: 0.8rem; padding: 10px 14px; }
     .heatmap-day { width: 12px; height: 12px; }
+    .streak-mark-btn { font-size: 0.85rem; padding: 14px 16px; }
+    .streak-reset-btn { font-size: 0.7rem; padding: 8px 14px; }
   }
 
   @media (max-width: 900px) and (orientation: landscape) {
@@ -948,13 +1008,9 @@
 
 <main class="main" id="main">
 
-  <!-- ============================================================ -->
-  <!-- DASHBOARD -->
-  <!-- ============================================================ -->
   <section id="dashboard" class="section active">
     <h2 style="font-size:1.3rem; color:#c0d8f0; margin-bottom:1.2rem;">📊 Dashboard de Desempenho</h2>
 
-    <!-- CONTADOR REGRESSIVO -->
     <div class="countdown-card">
       <div class="cd-label">⏳ Faltam para a prova</div>
       <div class="cd-days" id="cd-days">--</div>
@@ -993,6 +1049,15 @@
       </div>
       <div class="streak-heatmap" id="streak-heatmap"></div>
       <div class="streak-message" id="streak-message">Carregando...</div>
+
+      <button class="streak-mark-btn" id="streak-mark-btn" onclick="markTodayManually()">
+        🔥 Marcar hoje como dia de estudo
+      </button>
+
+      <!-- BOTÃO DE RESETAR CONSTÂNCIA (PROTEGIDO POR SENHA) -->
+      <button class="streak-reset-btn" onclick="resetStreakWithPassword()">
+        🔒 Resetar constância
+      </button>
     </div>
 
     <div class="dash-grid">
@@ -1067,9 +1132,6 @@
     </div>
   </section>
 
-  <!-- ============================================================ -->
-  <!-- CRONOGRAMA -->
-  <!-- ============================================================ -->
   <section id="cronograma" class="section">
     <h2 style="font-size:1.3rem; color:#c0d8f0; margin-bottom:1.2rem;">📅 Cronograma & Registro Semanal</h2>
 
@@ -1094,9 +1156,6 @@
     </div>
   </section>
 
-  <!-- ============================================================ -->
-  <!-- EDITAL VERTICALIZADO -->
-  <!-- ============================================================ -->
   <section id="edital" class="section">
     <h2 style="font-size:1.3rem; color:#c0d8f0; margin-bottom:1.2rem;">📋 Edital Verticalizado</h2>
     <div class="info-box">
@@ -1183,9 +1242,6 @@
     </div>
   </section>
 
-  <!-- ============================================================ -->
-  <!-- SIMULADOS -->
-  <!-- ============================================================ -->
   <section id="simulados" class="section">
     <h2 style="font-size:1.3rem; color:#c0d8f0; margin-bottom:1.2rem;">✏️ Simulados — Instituto Avalia</h2>
     <div class="info-box">
@@ -1209,9 +1265,6 @@
     </div>
   </section>
 
-  <!-- ============================================================ -->
-  <!-- POMODORO -->
-  <!-- ============================================================ -->
   <section id="pomodoro" class="section">
     <h2 style="font-size:1.3rem; color:#c0d8f0; margin-bottom:1.2rem;">🍅 Timer Pomodoro</h2>
 
@@ -1244,9 +1297,6 @@
     </div>
   </section>
 
-  <!-- ============================================================ -->
-  <!-- MÚSICA -->
-  <!-- ============================================================ -->
   <section id="musica" class="section">
     <h2 style="font-size:1.3rem; color:#c0d8f0; margin-bottom:1.2rem;">🎵 Música, Foco e Relaxamento</h2>
 
@@ -1284,9 +1334,6 @@
     </div>
   </section>
 
-  <!-- ============================================================ -->
-  <!-- MEMÓRIA -->
-  <!-- ============================================================ -->
   <section id="memoria" class="section">
     <h2 style="font-size:1.3rem; color:#c0d8f0; margin-bottom:1.2rem;">🧠 Caderno de Aprendizado</h2>
 
@@ -1328,9 +1375,6 @@
 <div class="toast" id="toast"></div>
 
 <script>
-/* ================================================================
-   SIDEBAR MOBILE
-   ================================================================ */
 function toggleSidebar() {
   const sb = document.getElementById('sidebar');
   const ov = document.getElementById('sidebar-overlay');
@@ -1342,9 +1386,6 @@ function closeSidebar() {
   document.getElementById('sidebar-overlay').classList.remove('active');
 }
 
-/* ================================================================
-   NAVEGAÇÃO
-   ================================================================ */
 function showSection(id, el) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -1354,20 +1395,14 @@ function showSection(id, el) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-/* ================================================================
-   TOAST
-   ================================================================ */
 function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
   clearTimeout(t._timeout);
-  t._timeout = setTimeout(() => t.classList.remove('show'), 2500);
+  t._timeout = setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-/* ================================================================
-   ESTADO PRINCIPAL
-   ================================================================ */
 const STORAGE_KEY = 'ufba_assist_adm_v4';
 
 function loadState() {
@@ -1395,16 +1430,11 @@ function saveState() {
 let state = loadState();
 
 /* ================================================================
-   SISTEMA DE CONSTÂNCIA (STREAK) — NÃO APAGÁVEL
-   ----------------------------------------------------------------
-   • Grava em DUAS chaves separadas (primária + backup)
-   • Ao carregar, faz MERGE (união) das duas — nada se perde
-   • Histórico é append-only: nunca sobrescreve, apenas soma
-   • Não há botão de reset na interface
-   • Indicador de integridade mostra se as duas chaves estão iguais
+   SISTEMA DE CONSTÂNCIA
    ================================================================ */
 const STREAK_KEY = 'ufba_streak_v1';
 const STREAK_BACKUP_KEY = 'ufba_streak_backup_v1';
+const RESET_PASSWORD = 'bubu';
 
 function getDateKey(d) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -1427,7 +1457,6 @@ function loadStreakData() {
   try { backup = JSON.parse(localStorage.getItem(STREAK_BACKUP_KEY)); } catch(e) {}
   const p = primary || { history: {}, best: 0 };
   const b = backup || { history: {}, best: 0 };
-  // MERGE: união de todos os dias conhecidos em qualquer chave
   const mergedHistory = { ...p.history, ...b.history };
   const mergedBest = Math.max(p.best || 0, b.best || 0);
   return { history: mergedHistory, best: mergedBest };
@@ -1455,7 +1484,44 @@ function logStudyDay() {
     saveStreakData(streakData);
     updateStreakUI();
     toast('🔥 +1 dia de constância!');
+    return true;
   }
+  return false;
+}
+
+function markTodayManually() {
+  const today = getTodayKey();
+  if (streakData.history[today]) {
+    toast('✅ Você já marcou o dia de hoje!');
+    return;
+  }
+  logStudyDay();
+}
+
+/* RESETAR CONSTÂNCIA COM SENHA */
+function resetStreakWithPassword() {
+  const senha = prompt('🔒 Digite a senha para resetar a constância:');
+  if (senha === null) return; // cancelou
+
+  if (senha.toLowerCase() !== RESET_PASSWORD) {
+    toast('❌ Senha incorreta! Constância preservada.');
+    return;
+  }
+
+  if (!confirm('⚠️ ATENÇÃO!\n\nIsso vai APAGAR permanentemente:\n• Sequência atual de dias\n• Recorde\n• Histórico de dias estudados\n\nDeseja continuar?')) {
+    toast('🛡️ Reset cancelado. Constância preservada.');
+    return;
+  }
+
+  // Reset efetivo
+  streakData = { history: {}, best: 0 };
+  try {
+    localStorage.removeItem(STREAK_KEY);
+    localStorage.removeItem(STREAK_BACKUP_KEY);
+  } catch(e) {}
+  saveStreakData(streakData);
+  updateStreakUI();
+  toast('🔄 Constância resetada com sucesso.');
 }
 
 function computeStreak() {
@@ -1494,7 +1560,19 @@ function updateStreakUI() {
   document.getElementById('streak-best').textContent = best;
   document.getElementById('streak-total').textContent = total;
 
-  // Heatmap - últimos 30 dias
+  const btn = document.getElementById('streak-mark-btn');
+  if (btn) {
+    if (todayMarked) {
+      btn.textContent = '✅ Hoje já marcado!';
+      btn.disabled = true;
+      btn.classList.add('marked');
+    } else {
+      btn.textContent = '🔥 Marcar hoje como dia de estudo';
+      btn.disabled = false;
+      btn.classList.remove('marked');
+    }
+  }
+
   const heatmap = document.getElementById('streak-heatmap');
   heatmap.innerHTML = '';
   const today = new Date();
@@ -1511,14 +1589,13 @@ function updateStreakUI() {
     heatmap.appendChild(div);
   }
 
-  // Mensagem motivacional
   const msgEl = document.getElementById('streak-message');
   if (current === 0 && total === 0) {
-    msgEl.textContent = '🌱 Comece hoje! Marque uma sessão para iniciar sua sequência.';
+    msgEl.textContent = '🌱 Comece hoje! Clique no botão abaixo para iniciar sua sequência.';
   } else if (current === 0) {
-    msgEl.textContent = '💪 Sua sequência parou. Marque qualquer ação hoje para reiniciar!';
+    msgEl.textContent = '💪 Sua sequência parou. Clique no botão abaixo para reiniciar hoje!';
   } else if (!todayMarked) {
-    msgEl.textContent = `🔥 ${current} ${current === 1 ? 'dia seguido' : 'dias seguidos'}! Estude hoje para manter a chama.`;
+    msgEl.textContent = `🔥 ${current} ${current === 1 ? 'dia seguido' : 'dias seguidos'}! Marque hoje para manter a chama.`;
   } else if (current === 1) {
     msgEl.textContent = '🔥 Primeiro dia! Volte amanhã para manter a constância.';
   } else if (current < 3) {
@@ -1533,7 +1610,6 @@ function updateStreakUI() {
     msgEl.textContent = `🏆 LENDÁRIO! ${current} dias seguidos de dedicação.`;
   }
 
-  // Integridade
   const intEl = document.getElementById('streak-integrity');
   const primary = localStorage.getItem(STREAK_KEY);
   const backup = localStorage.getItem(STREAK_BACKUP_KEY);
@@ -1541,6 +1617,10 @@ function updateStreakUI() {
     intEl.textContent = '✓';
     intEl.style.color = '#00ff88';
     intEl.title = 'Dados íntegros — replicados em duas chaves';
+  } else if (!primary && !backup) {
+    intEl.textContent = '✓';
+    intEl.style.color = '#5a7a9f';
+    intEl.title = 'Nenhuma constância registrada';
   } else {
     intEl.textContent = '⚠';
     intEl.style.color = '#ffaa00';
@@ -1696,9 +1776,6 @@ function isWeekComplete(weekId) {
   return total > 0 && done === total;
 }
 
-/* ================================================================
-   RENDER SEMANAS
-   ================================================================ */
 function renderWeekSelector() {
   const sel = document.getElementById('week-selector');
   sel.innerHTML = '';
@@ -1799,7 +1876,7 @@ function renderWeekContent() {
 function toggleSession(key, checkbox) {
   if (checkbox.checked) {
     state.sessions[key] = true;
-    logStudyDay(); // 🔥 registra o dia de estudo
+    logStudyDay();
   } else {
     delete state.sessions[key];
   }
@@ -1858,7 +1935,7 @@ function markAllWeek(value) {
       else delete state.sessions[key];
     });
   });
-  if (value) logStudyDay(); // 🔥 registra o dia se marcou ao menos uma sessão
+  if (value) logStudyDay();
   saveState();
   renderWeekSelector();
   renderWeekContent();
@@ -1883,9 +1960,6 @@ function clearWeekNotes() {
   toast('🗑️ Anotações limpas.');
 }
 
-/* ================================================================
-   DASHBOARD
-   ================================================================ */
 function updateDashboard() {
   const allTopics = document.querySelectorAll('.topics li');
   const totalTopics = allTopics.length;
@@ -1977,9 +2051,6 @@ function escapeHtml(s) {
   return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 
-/* ================================================================
-   EDITAL VERTICALIZADO
-   ================================================================ */
 document.querySelectorAll('.disc-card .topics li').forEach(li => {
   const topicId = li.dataset.topic;
   if (state.topics[topicId]) li.classList.add('done');
@@ -1987,16 +2058,14 @@ document.querySelectorAll('.disc-card .topics li').forEach(li => {
     e.stopPropagation();
     li.classList.toggle('done');
     state.topics[topicId] = li.classList.contains('done');
-    if (li.classList.contains('done')) logStudyDay(); // 🔥
+    if (li.classList.contains('done')) logStudyDay();
     saveState();
     updateDashboard();
     toast(li.classList.contains('done') ? '✅ Tópico concluído!' : '🔄 Tópico desmarcado');
   });
 });
 
-/* ================================================================
-   SIMULADOS
-   ================================================================ */
+/* SIMULADOS */
 const simulados = {
   sim1: {
     titulo: 'Simulado 1 — Língua Portuguesa',
@@ -2078,7 +2147,7 @@ function answerSimulado(simId, qIdx, optIdx) {
   if (optIdx === correta) { state.simAcertos++; toast('✅ Resposta correta!'); }
   else { state.simErros++; toast('❌ Incorreto. Veja a explicação.'); }
   state.simTotal++;
-  logStudyDay(); // 🔥
+  logStudyDay();
   saveState();
   updateDashboard();
   renderSimulado(simId);
@@ -2101,9 +2170,7 @@ function resetSimulados() {
   toast('🔄 Simulados resetados. Constância preservada.');
 }
 
-/* ================================================================
-   POMODORO
-   ================================================================ */
+/* POMODORO */
 let pomoInterval = null;
 let pomoSeconds = 25 * 60;
 let pomoPhase = 'foco';
@@ -2131,7 +2198,7 @@ function tickPomodoro() {
     if (pomoPhase === 'foco') {
       state.pomodoros++;
       state.pomoCycle = (state.pomoCycle % 4) + 1;
-      logStudyDay(); // 🔥 pomodoro concluído = dia de estudo
+      logStudyDay();
       saveState();
       updateDashboard();
       if (state.pomoCycle === 1 && state.pomodoros > 0 && state.pomodoros % 4 === 0) {
@@ -2169,9 +2236,7 @@ function resetPomodoro() {
   toast('↻ Timer resetado para 25:00');
 }
 
-/* ================================================================
-   MÚSICA
-   ================================================================ */
+/* MÚSICA */
 const musicUrls = {
   lofi: 'https://www.youtube.com/embed/jfKfPfyJRdk',
   chill: 'https://www.youtube.com/embed/mPZkdNFkNps',
@@ -2191,15 +2256,13 @@ function loadMusic(type, ev) {
   toast('🎵 Música carregada!');
 }
 
-/* ================================================================
-   MEMÓRIA
-   ================================================================ */
+/* MEMÓRIA */
 function addMemory() {
   const disc = document.getElementById('memory-disc').value;
   const text = document.getElementById('memory-text').value.trim();
   if (!text) { toast('⚠️ Digite algo antes de adicionar.'); return; }
   state.memories.unshift({ disc, text, date: new Date().toLocaleDateString('pt-BR') });
-  logStudyDay(); // 🔥
+  logStudyDay();
   saveState();
   renderMemories();
   document.getElementById('memory-text').value = '';
@@ -2221,9 +2284,6 @@ function renderMemories() {
   ).join('');
 }
 
-/* ================================================================
-   INIT
-   ================================================================ */
 function init() {
   renderWeekSelector();
   renderWeekContent();
