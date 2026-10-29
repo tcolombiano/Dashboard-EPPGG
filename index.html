@@ -400,10 +400,7 @@
     letter-spacing: 0.5px;
     user-select: none;
   }
-  .streak-mark-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 28px rgba(255, 45, 149, 0.6);
-  }
+  .streak-mark-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(255, 45, 149, 0.6); }
   .streak-mark-btn:active { transform: scale(0.97); }
   .streak-mark-btn.marked, .streak-mark-btn:disabled {
     background: linear-gradient(135deg, #0a2a1a, #1a2a4a);
@@ -413,7 +410,7 @@
     border: 1px solid #00ff8866;
   }
 
-  /* BOTÃO DE RESETAR CONSTÂNCIA (discreto, protegido por senha) */
+  /* BOTÃO DE RESETAR CONSTÂNCIA */
   .streak-reset-btn {
     display: block;
     margin: 0.8rem auto 0;
@@ -664,7 +661,7 @@
 
   .disc-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 1rem;
   }
   .disc-card {
@@ -694,13 +691,14 @@
   .disc-card .topics li {
     padding: 10px 0;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
     cursor: pointer;
     transition: color 0.2s;
     border-bottom: 1px solid #0f1a2e;
     min-height: 44px;
     user-select: none;
+    line-height: 1.4;
   }
   .disc-card .topics li:active { background: rgba(0,212,255,0.04); }
   .disc-card .topics li.done { color: #3a8f5a; text-decoration: line-through; }
@@ -714,6 +712,7 @@
     font-size: 0.75rem;
     flex-shrink: 0;
     transition: all 0.2s;
+    margin-top: 1px;
   }
   .disc-card .topics li.done .check {
     background: #00d4ff;
@@ -1054,7 +1053,6 @@
         🔥 Marcar hoje como dia de estudo
       </button>
 
-      <!-- BOTÃO DE RESETAR CONSTÂNCIA (PROTEGIDO POR SENHA) -->
       <button class="streak-reset-btn" onclick="resetStreakWithPassword()">
         🔒 Resetar constância
       </button>
@@ -1076,7 +1074,7 @@
       <div class="stat-card">
         <div class="value" id="stat-semanas">0</div>
         <div class="label">Semanas Finalizadas</div>
-        <div class="sub">de 4 semanas</div>
+        <div class="sub">de 7 semanas</div>
       </div>
       <div class="stat-card">
         <div class="value" id="stat-acertos">0</div>
@@ -1163,80 +1161,113 @@
     </div>
 
     <div class="disc-grid" id="edital-grid">
+      <!-- LÍNGUA PORTUGUESA -->
       <div class="disc-card" data-disc="portugues">
         <div class="header">
           <h4>📖 Língua Portuguesa</h4>
           <span class="badge">12 questões · 12 pts</span>
         </div>
         <ul class="topics" data-disc="portugues">
-          <li data-topic="p1"><span class="check">✓</span> Compreensão e interpretação de textos</li>
-          <li data-topic="p2"><span class="check">✓</span> Gêneros e tipologia textual</li>
-          <li data-topic="p3"><span class="check">✓</span> Ortografia oficial</li>
-          <li data-topic="p4"><span class="check">✓</span> Mecanismos de coesão textual</li>
-          <li data-topic="p5"><span class="check">✓</span> Emprego de tempos e modos verbais</li>
-          <li data-topic="p6"><span class="check">✓</span> Estrutura morfossintática do período</li>
-          <li data-topic="p7"><span class="check">✓</span> Emprego das classes de palavras</li>
-          <li data-topic="p8"><span class="check">✓</span> Emprego dos sinais de pontuação</li>
-          <li data-topic="p9"><span class="check">✓</span> Concordância verbal e nominal</li>
-          <li data-topic="p10"><span class="check">✓</span> Regência verbal e nominal</li>
-          <li data-topic="p11"><span class="check">✓</span> Crase</li>
-          <li data-topic="p12"><span class="check">✓</span> Colocação pronominal</li>
-          <li data-topic="p13"><span class="check">✓</span> Reescrita de frases e parágrafos</li>
-          <li data-topic="p14"><span class="check">✓</span> Significação das palavras</li>
-          <li data-topic="p15"><span class="check">✓</span> Manual de Redação da Presidência (Parte I)</li>
+          <li data-topic="p1"><span class="check">✓</span> 1. Compreensão e interpretação de textos de gêneros variados (ideias centrais/periféricas, inferências, intenção)</li>
+          <li data-topic="p2"><span class="check">✓</span> 2. Tipologia textual: narração, descrição, dissertação-argumentativa, exposição e injunção</li>
+          <li data-topic="p3"><span class="check">✓</span> 3. Gêneros textuais e suas características</li>
+          <li data-topic="p4"><span class="check">✓</span> 4. Ortografia oficial e acentuação gráfica (Acordo Ortográfico vigente)</li>
+          <li data-topic="p5"><span class="check">✓</span> 5. Coesão e coerência: referência, substituição, repetição, elipse, conectores, progressão temática</li>
+          <li data-topic="p6"><span class="check">✓</span> 6. Morfossintaxe: classes de palavras, formação/estrutura, frase/oração/período, termos, coordenação, subordinação, vozes verbais, pronomes relativos</li>
+          <li data-topic="p7"><span class="check">✓</span> 7. Pontuação, concordância verbal/nominal, regência verbal/nominal, crase, colocação pronominal</li>
+          <li data-topic="p8"><span class="check">✓</span> 8. Semântica: denotação/conotação, sinonímia, antonímia, homonímia, paronímia, ambiguidade, figuras de linguagem</li>
+          <li data-topic="p9"><span class="check">✓</span> 9. Reescrita e reformulação de frases (transposição de voz, substituição lexical, nível de formalidade)</li>
+          <li data-topic="p10"><span class="check">✓</span> 10. Variação linguística e adequação de registro (formal/informal)</li>
+          <li data-topic="p11"><span class="check">✓</span> 11. Redação Oficial (Manual da Presidência): impessoalidade, clareza, concisão, formalidade, pronomes, estrutura</li>
         </ul>
       </div>
 
+      <!-- NOÇÕES DE INFORMÁTICA -->
       <div class="disc-card" data-disc="informatica">
         <div class="header">
           <h4>💻 Noções de Informática</h4>
           <span class="badge">6 questões · 6 pts</span>
         </div>
         <ul class="topics" data-disc="informatica">
-          <li data-topic="i1"><span class="check">✓</span> Conceitos básicos: Hardware e Software</li>
-          <li data-topic="i2"><span class="check">✓</span> Sistemas operacionais (Windows/Linux)</li>
-          <li data-topic="i3"><span class="check">✓</span> Editores de texto (Word/Writer)</li>
-          <li data-topic="i4"><span class="check">✓</span> Planilhas eletrônicas (Excel/Calc)</li>
-          <li data-topic="i5"><span class="check">✓</span> Internet: navegação, correio eletrônico</li>
-          <li data-topic="i6"><span class="check">✓</span> Segurança da informação</li>
-          <li data-topic="i7"><span class="check">✓</span> Computação em nuvem</li>
+          <li data-topic="i1"><span class="check">✓</span> 1. Conceitos básicos de informática e tecnologias da informação</li>
+          <li data-topic="i2"><span class="check">✓</span> 2. Sistemas operacionais (Windows 10+)</li>
+          <li data-topic="i3"><span class="check">✓</span> 3. Organização e gerenciamento de informações (arquivos, pastas, integridade)</li>
+          <li data-topic="i4"><span class="check">✓</span> 4. Editores de escritório (Office 365: textos, planilhas, apresentações)</li>
+          <li data-topic="i5"><span class="check">✓</span> 5. Correio eletrônico (Outlook) e ferramentas de colaboração</li>
+          <li data-topic="i6"><span class="check">✓</span> 6. Internet e intranet (conceitos, serviços, navegadores Chrome/Firefox)</li>
+          <li data-topic="i7"><span class="check">✓</span> 7. Ferramentas de busca, pesquisa e compartilhamento na internet</li>
+          <li data-topic="i8"><span class="check">✓</span> 8. Computação em nuvem (armazenamento, compartilhamento, colaboração)</li>
+          <li data-topic="i9"><span class="check">✓</span> 9. Redes de computadores (conectividade, compartilhamento de recursos)</li>
+          <li data-topic="i10"><span class="check">✓</span> 10. Segurança da informação (proteção de dados, senhas, autenticação, engenharia social, phishing)</li>
+          <li data-topic="i11"><span class="check">✓</span> 11. Ameaças cibernéticas (vírus, worms, malware, ransomware)</li>
+          <li data-topic="i12"><span class="check">✓</span> 12. Ferramentas de segurança (antivírus, firewall, backups, recuperação)</li>
         </ul>
       </div>
 
+      <!-- ADMINISTRAÇÃO PÚBLICA -->
       <div class="disc-card" data-disc="admpublica">
         <div class="header">
           <h4>🏛️ Administração Pública</h4>
           <span class="badge">12 questões · 12 pts</span>
         </div>
         <ul class="topics" data-disc="admpublica">
-          <li data-topic="a1"><span class="check">✓</span> Administração Pública Federal (CF, Título III, Cap. VII)</li>
-          <li data-topic="a2"><span class="check">✓</span> Agente Público: função pública e atendimento ao cidadão</li>
-          <li data-topic="a3"><span class="check">✓</span> Regime Jurídico dos Servidores (Lei 8.112/1990)</li>
-          <li data-topic="a4"><span class="check">✓</span> Ética na Adm. Pública (Dec. 1.171/1994)</li>
-          <li data-topic="a5"><span class="check">✓</span> Improbidade Administrativa (Lei 8.429/1992)</li>
-          <li data-topic="a6"><span class="check">✓</span> Plano de Carreira dos TAEs (Lei 11.091/2005)</li>
-          <li data-topic="a7"><span class="check">✓</span> LGPD (Lei 13.709/2018)</li>
-          <li data-topic="a8"><span class="check">✓</span> Estatuto e Regimento Geral da UFBA</li>
-          <li data-topic="a9"><span class="check">✓</span> Processo Administrativo (Lei 9.784/1999)</li>
-          <li data-topic="a10"><span class="check">✓</span> Licitações (Lei 14.133/2021)</li>
+          <li data-topic="a1"><span class="check">✓</span> 1. Adm. Pública na CF/88: princípios (LIMPE), administração direta/indireta, servidores</li>
+          <li data-topic="a2"><span class="check">✓</span> 2. Estrutura e organização da Adm. Pública Federal (descentralização, desconcentração)</li>
+          <li data-topic="a3"><span class="check">✓</span> 3. Agentes públicos: conceito, espécies, investidura, deveres, atendimento ao cidadão</li>
+          <li data-topic="a4"><span class="check">✓</span> 4. Regime Jurídico dos Servidores (Lei 8.112/1990): provimento, vacância, direitos, deveres, PAD</li>
+          <li data-topic="a5"><span class="check">✓</span> 5. Ética no Serviço Público (Dec. 1.171/1994 e Dec. 6.029/2007)</li>
+          <li data-topic="a6"><span class="check">✓</span> 6. Improbidade Administrativa (Lei 8.429/1992)</li>
+          <li data-topic="a7"><span class="check">✓</span> 7. Processo Administrativo Federal (Lei 9.784/1999)</li>
+          <li data-topic="a8"><span class="check">✓</span> 8. Transparência e Acesso à Informação (LAI - Lei 12.527/2011 e Dec. 7.724/2012)</li>
+          <li data-topic="a9"><span class="check">✓</span> 9. Proteção de Dados Pessoais (LGPD - Lei 13.709/2018)</li>
+          <li data-topic="a10"><span class="check">✓</span> 10. Licitações e Contratos (Lei 14.133/2021)</li>
+          <li data-topic="a11"><span class="check">✓</span> 11. Governança, Integridade e Controle (Dec. 9.830/2019)</li>
+          <li data-topic="a12"><span class="check">✓</span> 12. Governo Digital (Lei 14.129/2021)</li>
+          <li data-topic="a13"><span class="check">✓</span> 13. Gestão Documental e Arquivística (Lei 8.159/1991)</li>
+          <li data-topic="a14"><span class="check">✓</span> 14. Adm. de Recursos Materiais e Patrimoniais</li>
+          <li data-topic="a15"><span class="check">✓</span> 15. Sustentabilidade e Responsabilidade Socioambiental (A3P)</li>
+          <li data-topic="a16"><span class="check">✓</span> 16. Atendimento ao Público e Carta de Serviços</li>
+          <li data-topic="a17"><span class="check">✓</span> 17. Segurança da Informação e Boas Práticas</li>
+          <li data-topic="a18"><span class="check">✓</span> 18. Redação Oficial e Comunicação Administrativa</li>
+          <li data-topic="a19"><span class="check">✓</span> 19. Organização das IFES</li>
+          <li data-topic="a20"><span class="check">✓</span> 20. Estatuto e Regimento Geral da UFBA</li>
         </ul>
       </div>
 
+      <!-- CONHECIMENTOS ESPECÍFICOS -->
       <div class="disc-card" data-disc="especificos">
         <div class="header">
           <h4>⚙️ Conhecimentos Específicos</h4>
           <span class="badge">30 questões · 60 pts</span>
         </div>
         <ul class="topics" data-disc="especificos">
-          <li data-topic="e1"><span class="check">✓</span> Funções administrativas: planejamento, organização, direção e controle</li>
-          <li data-topic="e2"><span class="check">✓</span> Noções de administração geral</li>
-          <li data-topic="e3"><span class="check">✓</span> Gestão de pessoas</li>
-          <li data-topic="e4"><span class="check">✓</span> Gestão de materiais e patrimônio</li>
-          <li data-topic="e5"><span class="check">✓</span> Noções de documentação e arquivo</li>
-          <li data-topic="e6"><span class="check">✓</span> Redação oficial</li>
-          <li data-topic="e7"><span class="check">✓</span> Atendimento ao público</li>
-          <li data-topic="e8"><span class="check">✓</span> Rotinas administrativas</li>
-          <li data-topic="e9"><span class="check">✓</span> Gestão financeira e orçamentária</li>
+          <li data-topic="e1"><span class="check">✓</span> 1. Estado, governo e Administração Pública: conceitos, elementos, poderes, organização, fins e princípios</li>
+          <li data-topic="e2"><span class="check">✓</span> 2. Organização administrativa da União (direta e indireta)</li>
+          <li data-topic="e3"><span class="check">✓</span> 3. Agentes públicos: espécies, classificação, poderes, deveres, prerrogativas, cargo/emprego/função</li>
+          <li data-topic="e4"><span class="check">✓</span> 4. Poderes administrativos: hierárquico, disciplinar, regulamentar, polícia, uso e abuso do poder</li>
+          <li data-topic="e5"><span class="check">✓</span> 5. Serviços públicos: conceito, classificação, regulamentação, controle, delegação (concessão, permissão, autorização)</li>
+          <li data-topic="e6"><span class="check">✓</span> 6. Controle e responsabilização da Administração: administrativo, judicial, legislativo e responsabilidade civil do Estado</li>
+          <li data-topic="e7"><span class="check">✓</span> 7. Lei 14.133/2021: licitações (conceito, objeto, finalidades, princípios, obrigatoriedade, dispensa, inexigibilidade, vedação, modalidades, procedimentos, fases, revogação, invalidação, desistência, controle)</li>
+          <li data-topic="e8"><span class="check">✓</span> 8. Características básicas das organizações formais modernas (estrutura, natureza, finalidades, departamentalização)</li>
+          <li data-topic="e9"><span class="check">✓</span> 9. Processo organizacional: planejamento, direção, comunicação, controle e avaliação</li>
+          <li data-topic="e10"><span class="check">✓</span> 10. Gestão de processos</li>
+          <li data-topic="e11"><span class="check">✓</span> 11. Gestão da qualidade</li>
+          <li data-topic="e12"><span class="check">✓</span> 12. Gestão de projetos</li>
+          <li data-topic="e13"><span class="check">✓</span> 13. Gestão de Pessoas: conceitos, importância, relação com outros sistemas</li>
+          <li data-topic="e14"><span class="check">✓</span> 14. Função do órgão de gestão de pessoas (atribuições, objetivos, políticas, sistemas de informações)</li>
+          <li data-topic="e15"><span class="check">✓</span> 15. Comportamento organizacional (relação indivíduo/organização, motivação, liderança)</li>
+          <li data-topic="e16"><span class="check">✓</span> 16. Adm. de Recursos Materiais: classificação de materiais e tipos de classificação</li>
+          <li data-topic="e17"><span class="check">✓</span> 17. Gestão de estoques</li>
+          <li data-topic="e18"><span class="check">✓</span> 18. Compras, modalidades de compra e cadastro de fornecedores</li>
+          <li data-topic="e19"><span class="check">✓</span> 19. Recebimento, armazenagem, entrada, conferência e critérios/técnicas de armazenagem</li>
+          <li data-topic="e20"><span class="check">✓</span> 20. Arquivologia: conceitos fundamentais e gestão de documentos</li>
+          <li data-topic="e21"><span class="check">✓</span> 21. Diagnósticos, arquivos correntes e intermediários</li>
+          <li data-topic="e22"><span class="check">✓</span> 22. Protocolos, avaliação de documentos e arquivos permanentes</li>
+          <li data-topic="e23"><span class="check">✓</span> 23. Tipologias documentais, suportes físicos, microfilmagem e automação</li>
+          <li data-topic="e24"><span class="check">✓</span> 24. Preservação, conservação e restauração de documentos</li>
+          <li data-topic="e25"><span class="check">✓</span> 25. Atendimento ao Público: qualidade, comunicabilidade, apresentação, atenção, cortesia</li>
+          <li data-topic="e26"><span class="check">✓</span> 26. Trabalho em equipe (personalidade, relacionamento, empatia, compreensão mútua)</li>
+          <li data-topic="e27"><span class="check">✓</span> 27. Postura profissional, relações interpessoais e comunicação</li>
         </ul>
       </div>
     </div>
@@ -1403,7 +1434,7 @@ function toast(msg) {
   t._timeout = setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-const STORAGE_KEY = 'ufba_assist_adm_v4';
+const STORAGE_KEY = 'ufba_assist_adm_v5';
 
 function loadState() {
   try {
@@ -1429,9 +1460,7 @@ function saveState() {
 }
 let state = loadState();
 
-/* ================================================================
-   SISTEMA DE CONSTÂNCIA
-   ================================================================ */
+/* SISTEMA DE CONSTÂNCIA */
 const STREAK_KEY = 'ufba_streak_v1';
 const STREAK_BACKUP_KEY = 'ufba_streak_backup_v1';
 const RESET_PASSWORD = 'bubu';
@@ -1475,10 +1504,7 @@ let streakData = loadStreakData();
 function logStudyDay() {
   const today = getTodayKey();
   if (!streakData.history[today]) {
-    streakData.history[today] = {
-      ts: Date.now(),
-      h: makeHash(today + Date.now() + Math.random().toString())
-    };
+    streakData.history[today] = { ts: Date.now(), h: makeHash(today + Date.now() + Math.random().toString()) };
     const cur = computeStreak();
     if (cur > streakData.best) streakData.best = cur;
     saveStreakData(streakData);
@@ -1498,30 +1524,22 @@ function markTodayManually() {
   logStudyDay();
 }
 
-/* RESETAR CONSTÂNCIA COM SENHA */
 function resetStreakWithPassword() {
   const senha = prompt('🔒 Digite a senha para resetar a constância:');
-  if (senha === null) return; // cancelou
-
+  if (senha === null) return;
   if (senha.toLowerCase() !== RESET_PASSWORD) {
     toast('❌ Senha incorreta! Constância preservada.');
     return;
   }
-
-  if (!confirm('⚠️ ATENÇÃO!\n\nIsso vai APAGAR permanentemente:\n• Sequência atual de dias\n• Recorde\n• Histórico de dias estudados\n\nDeseja continuar?')) {
-    toast('🛡️ Reset cancelado. Constância preservada.');
+  if (!confirm('⚠️ ATENÇÃO!\n\nIsso vai APAGAR permanentemente:\n• Sequência atual\n• Recorde\n• Histórico\n\nDeseja continuar?')) {
+    toast('🛡️ Reset cancelado.');
     return;
   }
-
-  // Reset efetivo
   streakData = { history: {}, best: 0 };
-  try {
-    localStorage.removeItem(STREAK_KEY);
-    localStorage.removeItem(STREAK_BACKUP_KEY);
-  } catch(e) {}
+  try { localStorage.removeItem(STREAK_KEY); localStorage.removeItem(STREAK_BACKUP_KEY); } catch(e) {}
   saveStreakData(streakData);
   updateStreakUI();
-  toast('🔄 Constância resetada com sucesso.');
+  toast('🔄 Constância resetada.');
 }
 
 function computeStreak() {
@@ -1529,10 +1547,7 @@ function computeStreak() {
   const d = new Date();
   const todayMarked = !!streakData.history[getDateKey(d)];
   if (!todayMarked) d.setDate(d.getDate() - 1);
-  while (streakData.history[getDateKey(d)]) {
-    streak++;
-    d.setDate(d.getDate() - 1);
-  }
+  while (streakData.history[getDateKey(d)]) { streak++; d.setDate(d.getDate() - 1); }
   return streak;
 }
 
@@ -1544,8 +1559,7 @@ function computeBestStreak() {
     const prev = new Date(dates[i-1] + 'T12:00:00');
     const curr = new Date(dates[i] + 'T12:00:00');
     const diff = Math.round((curr - prev) / (1000 * 60 * 60 * 24));
-    if (diff === 1) { cur++; if (cur > best) best = cur; }
-    else { cur = 1; }
+    if (diff === 1) { cur++; if (cur > best) best = cur; } else { cur = 1; }
   }
   return Math.max(best, streakData.best || 0);
 }
@@ -1590,48 +1604,30 @@ function updateStreakUI() {
   }
 
   const msgEl = document.getElementById('streak-message');
-  if (current === 0 && total === 0) {
-    msgEl.textContent = '🌱 Comece hoje! Clique no botão abaixo para iniciar sua sequência.';
-  } else if (current === 0) {
-    msgEl.textContent = '💪 Sua sequência parou. Clique no botão abaixo para reiniciar hoje!';
-  } else if (!todayMarked) {
-    msgEl.textContent = `🔥 ${current} ${current === 1 ? 'dia seguido' : 'dias seguidos'}! Marque hoje para manter a chama.`;
-  } else if (current === 1) {
-    msgEl.textContent = '🔥 Primeiro dia! Volte amanhã para manter a constância.';
-  } else if (current < 3) {
-    msgEl.textContent = `🔥 ${current} dias seguidos! Continue firme.`;
-  } else if (current < 7) {
-    msgEl.textContent = `🔥 ${current} dias seguidos! Você está construindo constância.`;
-  } else if (current < 14) {
-    msgEl.textContent = `🔥 Uma semana completa! ${current} dias seguidos. Continue.`;
-  } else if (current < 30) {
-    msgEl.textContent = `🔥 Você está imparável! ${current} dias seguidos.`;
-  } else {
-    msgEl.textContent = `🏆 LENDÁRIO! ${current} dias seguidos de dedicação.`;
-  }
+  if (current === 0 && total === 0) msgEl.textContent = '🌱 Comece hoje! Clique no botão abaixo para iniciar.';
+  else if (current === 0) msgEl.textContent = '💪 Sua sequência parou. Clique no botão abaixo para reiniciar hoje!';
+  else if (!todayMarked) msgEl.textContent = `🔥 ${current} ${current === 1 ? 'dia seguido' : 'dias seguidos'}! Marque hoje para manter a chama.`;
+  else if (current === 1) msgEl.textContent = '🔥 Primeiro dia! Volte amanhã para manter a constância.';
+  else if (current < 3) msgEl.textContent = `🔥 ${current} dias seguidos! Continue firme.`;
+  else if (current < 7) msgEl.textContent = `🔥 ${current} dias seguidos! Você está construindo constância.`;
+  else if (current < 14) msgEl.textContent = `🔥 Uma semana completa! ${current} dias seguidos. Continue.`;
+  else if (current < 30) msgEl.textContent = `🔥 Você está imparável! ${current} dias seguidos.`;
+  else msgEl.textContent = `🏆 LENDÁRIO! ${current} dias seguidos de dedicação.`;
 
   const intEl = document.getElementById('streak-integrity');
   const primary = localStorage.getItem(STREAK_KEY);
   const backup = localStorage.getItem(STREAK_BACKUP_KEY);
   if (primary && backup && primary === backup) {
-    intEl.textContent = '✓';
-    intEl.style.color = '#00ff88';
-    intEl.title = 'Dados íntegros — replicados em duas chaves';
+    intEl.textContent = '✓'; intEl.style.color = '#00ff88'; intEl.title = 'Dados íntegros';
   } else if (!primary && !backup) {
-    intEl.textContent = '✓';
-    intEl.style.color = '#5a7a9f';
-    intEl.title = 'Nenhuma constância registrada';
+    intEl.textContent = '✓'; intEl.style.color = '#5a7a9f'; intEl.title = 'Nenhuma constância registrada';
   } else {
-    intEl.textContent = '⚠';
-    intEl.style.color = '#ffaa00';
-    intEl.title = 'Divergência detectada — dados recuperados automaticamente';
+    intEl.textContent = '⚠'; intEl.style.color = '#ffaa00'; intEl.title = 'Divergência detectada — recuperando...';
     saveStreakData(streakData);
   }
 }
 
-/* ================================================================
-   CONTADOR REGRESSIVO
-   ================================================================ */
+/* CONTADOR REGRESSIVO */
 const DATA_PROVA = new Date('2026-12-20T08:00:00-03:00');
 
 function updateCountdown() {
@@ -1645,21 +1641,13 @@ function updateCountdown() {
   const cdSeconds = document.getElementById('cd-seconds');
   const cdMsg = document.getElementById('cd-message');
 
-  const dataFormatada = DATA_PROVA.toLocaleDateString('pt-BR', {
-    weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
-  });
+  const dataFormatada = DATA_PROVA.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
   const horaFormatada = DATA_PROVA.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
   if (diffMs <= 0) {
-    cdDays.textContent = '0';
-    cdUnit.textContent = 'dias';
-    cdHours.textContent = '00';
-    cdMinutes.textContent = '00';
-    cdSeconds.textContent = '00';
+    cdDays.textContent = '0'; cdUnit.textContent = 'dias'; cdHours.textContent = '00'; cdMinutes.textContent = '00'; cdSeconds.textContent = '00';
     cdDate.innerHTML = `Prova realizada em <strong>${dataFormatada}</strong>`;
-    cdMsg.textContent = '🎉 A prova já foi realizada. Boa sorte!';
-    cdMsg.className = 'cd-message done';
-    return;
+    cdMsg.textContent = '🎉 A prova já foi realizada. Boa sorte!'; cdMsg.className = 'cd-message done'; return;
   }
 
   const totalSegundos = Math.floor(diffMs / 1000);
@@ -1668,36 +1656,20 @@ function updateCountdown() {
   const minutos = Math.floor((totalSegundos % 3600) / 60);
   const segundos = totalSegundos % 60;
 
-  cdDays.textContent = dias;
-  cdUnit.textContent = dias === 1 ? 'dia' : 'dias';
-  cdHours.textContent = String(horas).padStart(2, '0');
-  cdMinutes.textContent = String(minutos).padStart(2, '0');
-  cdSeconds.textContent = String(segundos).padStart(2, '0');
+  cdDays.textContent = dias; cdUnit.textContent = dias === 1 ? 'dia' : 'dias';
+  cdHours.textContent = String(horas).padStart(2, '0'); cdMinutes.textContent = String(minutos).padStart(2, '0'); cdSeconds.textContent = String(segundos).padStart(2, '0');
   cdDate.innerHTML = `📅 <strong>${dataFormatada}</strong><br>às <strong>${horaFormatada}</strong>`;
 
-  if (dias > 60) {
-    cdMsg.textContent = '💪 Ainda há tempo — mantenha o ritmo constante.';
-    cdMsg.className = 'cd-message';
-  } else if (dias > 30) {
-    cdMsg.textContent = '⚡ Reta intermediária: acelere as revisões.';
-    cdMsg.className = 'cd-message';
-  } else if (dias > 14) {
-    cdMsg.textContent = '🔥 Fase final: priorize revisão e questões.';
-    cdMsg.className = 'cd-message urgent';
-  } else if (dias > 7) {
-    cdMsg.textContent = '🚨 Última quinzena: foque nos pontos fracos.';
-    cdMsg.className = 'cd-message urgent';
-  } else if (dias > 0) {
-    cdMsg.textContent = '⏰ Semana da prova: revise o caderno de erros.';
-    cdMsg.className = 'cd-message urgent';
-  }
+  if (dias > 60) { cdMsg.textContent = '💪 Ainda há tempo — mantenha o ritmo constante.'; cdMsg.className = 'cd-message'; }
+  else if (dias > 30) { cdMsg.textContent = '⚡ Reta intermediária: acelere as revisões.'; cdMsg.className = 'cd-message'; }
+  else if (dias > 14) { cdMsg.textContent = '🔥 Fase final: priorize revisão e questões.'; cdMsg.className = 'cd-message urgent'; }
+  else if (dias > 7) { cdMsg.textContent = '🚨 Última quinzena: foque nos pontos fracos.'; cdMsg.className = 'cd-message urgent'; }
+  else if (dias > 0) { cdMsg.textContent = '⏰ Semana da prova: revise o caderno de erros.'; cdMsg.className = 'cd-message urgent'; }
 }
 setInterval(updateCountdown, 1000);
 updateCountdown();
 
-/* ================================================================
-   DADOS DAS SEMANAS
-   ================================================================ */
+/* DADOS DAS SEMANAS (7 SEMANAS ATÉ A PROVA) */
 const SUBJECT_TAGS = {
   'Português': 'tag-port',
   'Informática': 'tag-info',
@@ -1709,7 +1681,7 @@ const SUBJECT_TAGS = {
 
 const weeksData = [
   {
-    id: 'w1', label: 'Semana 1', period: '05/10 – 11/10',
+    id: 'w1', label: 'Semana 1', period: '02/11 – 08/11',
     days: [
       { name: 'Domingo', sessions: { manha: ['Português','Revisão'], tarde: ['Adm. Pública','Específicos'], noite: ['Simulado','Revisão'] } },
       { name: 'Segunda', sessions: { manha: ['Português','Informática'], tarde: ['Específicos','Adm. Pública'], noite: ['Português','Revisão'] } },
@@ -1721,7 +1693,7 @@ const weeksData = [
     ]
   },
   {
-    id: 'w2', label: 'Semana 2', period: '12/10 – 18/10',
+    id: 'w2', label: 'Semana 2', period: '09/11 – 15/11',
     days: [
       { name: 'Domingo', sessions: { manha: ['Português','Revisão'], tarde: ['Específicos','Adm. Pública'], noite: ['Simulado','Revisão'] } },
       { name: 'Segunda', sessions: { manha: ['Adm. Pública','Informática'], tarde: ['Português','Específicos'], noite: ['Adm. Pública','Revisão'] } },
@@ -1733,7 +1705,7 @@ const weeksData = [
     ]
   },
   {
-    id: 'w3', label: 'Semana 3', period: '19/10 – 25/10',
+    id: 'w3', label: 'Semana 3', period: '16/11 – 22/11',
     days: [
       { name: 'Domingo', sessions: { manha: ['Português','Revisão'], tarde: ['Adm. Pública','Específicos'], noite: ['Simulado','Revisão'] } },
       { name: 'Segunda', sessions: { manha: ['Específicos','Informática'], tarde: ['Português','Adm. Pública'], noite: ['Português','Revisão'] } },
@@ -1745,7 +1717,7 @@ const weeksData = [
     ]
   },
   {
-    id: 'w4', label: 'Semana 4', period: '26/10 – 01/11',
+    id: 'w4', label: 'Semana 4', period: '23/11 – 29/11',
     days: [
       { name: 'Domingo', sessions: { manha: ['Português','Revisão'], tarde: ['Específicos','Adm. Pública'], noite: ['Simulado','Revisão'] } },
       { name: 'Segunda', sessions: { manha: ['Adm. Pública','Informática'], tarde: ['Português','Específicos'], noite: ['Adm. Pública','Revisão'] } },
@@ -1754,6 +1726,42 @@ const weeksData = [
       { name: 'Quinta',  sessions: { manha: ['Adm. Pública','Específicos'], tarde: ['Português','Simulado'], noite: ['Informática','Revisão'] } },
       { name: 'Sexta',   sessions: { manha: ['Simulado','Revisão'], tarde: ['Específicos','Português'], noite: ['Adm. Pública','Revisão'] } },
       { name: 'Sábado',  sessions: { manha: ['Português','Adm. Pública'], tarde: ['Informática','Simulado'], noite: ['Específicos','Revisão'] } }
+    ]
+  },
+  {
+    id: 'w5', label: 'Semana 5', period: '30/11 – 06/12',
+    days: [
+      { name: 'Domingo', sessions: { manha: ['Português','Revisão'], tarde: ['Específicos','Adm. Pública'], noite: ['Simulado','Revisão'] } },
+      { name: 'Segunda', sessions: { manha: ['Adm. Pública','Informática'], tarde: ['Português','Específicos'], noite: ['Adm. Pública','Revisão'] } },
+      { name: 'Terça',   sessions: { manha: ['Específicos','Português'], tarde: ['Adm. Pública','Informática'], noite: ['Português','Revisão'] } },
+      { name: 'Quarta',  sessions: { manha: ['Português','Adm. Pública'], tarde: ['Específicos','Informática'], noite: ['Específicos','Revisão'] } },
+      { name: 'Quinta',  sessions: { manha: ['Adm. Pública','Específicos'], tarde: ['Português','Simulado'], noite: ['Informática','Revisão'] } },
+      { name: 'Sexta',   sessions: { manha: ['Simulado','Revisão'], tarde: ['Específicos','Português'], noite: ['Adm. Pública','Revisão'] } },
+      { name: 'Sábado',  sessions: { manha: ['Português','Adm. Pública'], tarde: ['Informática','Simulado'], noite: ['Específicos','Revisão'] } }
+    ]
+  },
+  {
+    id: 'w6', label: 'Semana 6', period: '07/12 – 13/12',
+    days: [
+      { name: 'Domingo', sessions: { manha: ['Português','Revisão'], tarde: ['Específicos','Adm. Pública'], noite: ['Simulado','Revisão'] } },
+      { name: 'Segunda', sessions: { manha: ['Adm. Pública','Informática'], tarde: ['Português','Específicos'], noite: ['Adm. Pública','Revisão'] } },
+      { name: 'Terça',   sessions: { manha: ['Específicos','Português'], tarde: ['Adm. Pública','Informática'], noite: ['Português','Revisão'] } },
+      { name: 'Quarta',  sessions: { manha: ['Português','Adm. Pública'], tarde: ['Específicos','Informática'], noite: ['Específicos','Revisão'] } },
+      { name: 'Quinta',  sessions: { manha: ['Adm. Pública','Específicos'], tarde: ['Português','Simulado'], noite: ['Informática','Revisão'] } },
+      { name: 'Sexta',   sessions: { manha: ['Simulado','Revisão'], tarde: ['Específicos','Português'], noite: ['Adm. Pública','Revisão'] } },
+      { name: 'Sábado',  sessions: { manha: ['Português','Adm. Pública'], tarde: ['Informática','Simulado'], noite: ['Específicos','Revisão'] } }
+    ]
+  },
+  {
+    id: 'w7', label: 'Semana 7', period: '14/12 – 20/12',
+    days: [
+      { name: 'Domingo', sessions: { manha: ['Português','Revisão'], tarde: ['Específicos','Adm. Pública'], noite: ['Simulado','Revisão'] } },
+      { name: 'Segunda', sessions: { manha: ['Adm. Pública','Informática'], tarde: ['Português','Específicos'], noite: ['Adm. Pública','Revisão'] } },
+      { name: 'Terça',   sessions: { manha: ['Específicos','Português'], tarde: ['Adm. Pública','Informática'], noite: ['Português','Revisão'] } },
+      { name: 'Quarta',  sessions: { manha: ['Português','Adm. Pública'], tarde: ['Específicos','Informática'], noite: ['Específicos','Revisão'] } },
+      { name: 'Quinta',  sessions: { manha: ['Revisão','Revisão'], tarde: ['Simulado','Revisão'], noite: ['Revisão','Revisão'] } },
+      { name: 'Sexta',   sessions: { manha: ['Revisão','Revisão'], tarde: ['Simulado','Revisão'], noite: ['Revisão','Revisão'] } },
+      { name: 'Sábado',  sessions: { manha: ['Revisão','Revisão'], tarde: ['Revisão','Revisão'], noite: ['Revisão','Revisão'] } }
     ]
   }
 ];
@@ -1972,8 +1980,7 @@ function updateDashboard() {
   const { done, total } = getWeekSessionCount(current);
   const sessPct = total > 0 ? Math.round((done/total)*100) : 0;
   document.getElementById('stat-sessoes').textContent = `${done}/${total}`;
-  document.getElementById('stat-sessoes-sub').textContent =
-    `${weeksData.find(w => w.id === current).label} · ${sessPct}%`;
+  document.getElementById('stat-sessoes-sub').textContent = `${weeksData.find(w => w.id === current).label} · ${sessPct}%`;
   document.getElementById('sessoes-fill').style.width = sessPct + '%';
 
   const completedWeeks = weeksData.filter(w => isWeekComplete(w.id)).length;
@@ -1993,11 +2000,7 @@ function updateDashboard() {
     wpDiv.innerHTML += `
       <div style="margin-bottom:1rem; padding:0.8rem; background:#0a1220; border-radius:10px; border:1px solid ${complete ? '#00d4ff44' : '#1a2a4a'};">
         <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; color:#a0b8d8; margin-bottom:6px; flex-wrap:wrap; gap:4px;">
-          <span>
-            <strong style="color:${complete ? '#00ff88' : '#c0d8f0'};">${w.label}</strong>
-            <span style="color:#5a7a9f; font-size:0.72rem;"> · ${w.period}</span>
-            ${complete ? ' <span style="color:#00ff88;">✅</span>' : ''}
-          </span>
+          <span><strong style="color:${complete ? '#00ff88' : '#c0d8f0'};">${w.label}</strong> <span style="color:#5a7a9f; font-size:0.72rem;"> · ${w.period}</span> ${complete ? ' <span style="color:#00ff88;">✅</span>' : ''}</span>
           <span>${done}/${total} · <strong style="color:${p === 100 ? '#00ff88' : '#00d4ff'};">${p}%</strong></span>
         </div>
         <div class="progress-bar"><div class="progress-fill ${complete ? 'green' : ''}" style="width:${p}%"></div></div>
@@ -2005,12 +2008,7 @@ function updateDashboard() {
     `;
   });
 
-  const discMap = {
-    'portugues': 'Língua Portuguesa',
-    'informatica': 'Noções de Informática',
-    'admpublica': 'Administração Pública',
-    'especificos': 'Conhecimentos Específicos'
-  };
+  const discMap = { 'portugues': 'Língua Portuguesa', 'informatica': 'Noções de Informática', 'admpublica': 'Administração Pública', 'especificos': 'Conhecimentos Específicos' };
   const perfDiv = document.getElementById('disc-performance');
   perfDiv.innerHTML = '';
   for (const [key, label] of Object.entries(discMap)) {
@@ -2020,10 +2018,7 @@ function updateDashboard() {
     const p = t > 0 ? Math.round((d/t)*100) : 0;
     perfDiv.innerHTML += `
       <div style="margin-bottom:0.9rem;">
-        <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#a0b8d8;">
-          <span>${label}</span>
-          <span>${d}/${t} · ${p}%</span>
-        </div>
+        <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#a0b8d8;"><span>${label}</span><span>${d}/${t} · ${p}%</span></div>
         <div class="progress-bar"><div class="progress-fill" style="width:${p}%"></div></div>
       </div>`;
   }
@@ -2033,17 +2028,11 @@ function updateDashboard() {
   const regDiv = document.getElementById('current-week-register');
   if (notes && notes.trim()) {
     regDiv.innerHTML = `
-      <p style="margin-bottom:0.6rem;">
-        <strong style="color:#00d4ff;">${cw.label} · ${cw.period}</strong>
-        <span style="color:#5a7a9f; font-size:0.78rem;"> — ${done}/${total} sessões</span>
-      </p>
+      <p style="margin-bottom:0.6rem;"><strong style="color:#00d4ff;">${cw.label} · ${cw.period}</strong> <span style="color:#5a7a9f; font-size:0.78rem;"> — ${done}/${total} sessões</span></p>
       <div style="background:#0a1220; padding:1rem; border-radius:10px; border-left:3px solid #7b2ff7; white-space:pre-wrap; font-size:0.85rem; color:#a0b8d8;">${escapeHtml(notes)}</div>
     `;
   } else {
-    regDiv.innerHTML = `
-      <p>Nenhuma anotação para <strong style="color:#00d4ff;">${cw.label}</strong> ainda.</p>
-      <p style="margin-top:0.5rem; font-size:0.8rem; color:#5a7a9f;">Vá em <em>Cronograma & Registro</em> e escreva suas anotações.</p>
-    `;
+    regDiv.innerHTML = `<p>Nenhuma anotação para <strong style="color:#00d4ff;">${cw.label}</strong> ainda.</p><p style="margin-top:0.5rem; font-size:0.8rem; color:#5a7a9f;">Vá em <em>Cronograma & Registro</em> e escreva suas anotações.</p>`;
   }
 }
 
@@ -2084,7 +2073,7 @@ const simulados = {
       { q: 'São formas de provimento de cargo público, EXCETO:', opts: ['Nomeação','Promoção','Readaptação','Transferência','Reintegração'], correta: 3, explicacao: 'Transferência não é forma de provimento (art. 8º).' },
       { q: 'Segundo a CF/88, são princípios da administração pública:', opts: ['Legalidade, impessoalidade, moralidade, publicidade e eficiência','Legalidade, pessoalidade, moralidade, publicidade e eficácia','Legalidade, impessoalidade, imoralidade, publicidade e eficiência','Lei, impessoalidade, moralidade, publicidade e eficácia','Legalidade, impessoalidade, moralidade, privacidade e eficiência'], correta: 0, explicacao: 'LIMPE.' },
       { q: 'Sobre a LGPD (Lei 13.709/2018):', opts: ['Aplica-se apenas a pessoas jurídicas de direito privado','Dados anonimizados são dados pessoais','A lei não se aplica ao poder público','O titular tem direito à confirmação da existência de tratamento','A LGPD revogou o Marco Civil da Internet'], correta: 3, explicacao: 'Art. 18, I da LGPD.' },
-      { q: 'Conforme a Lei 11.091/2005, o Plano de Carreira dos TAEs estrutura-se em:', opts: ['Classes A, B, C e D','Classes D e E apenas','Níveis de capacitação','Padrões de vencimento e níveis de capacitação','Apenas cargos de nível superior'], correta: 3, explicacao: 'Classes (D e E) + níveis de capacitação + padrões de vencimento.' }
+      { q: 'Conforme a Lei 14.133/2021, a licitação que tem por objetivo selecionar a proposta mais vantajosa para a Administração Pública denomina-se:', opts: ['Dispensa','Inexigibilidade','Concorrência','Pregão','Leilão'], correta: 2, explicacao: 'A concorrência é a modalidade para obras, serviços e compras de grande vulto. O pregão é para bens e serviços comuns.' }
     ]
   },
   sim3: {
@@ -2220,8 +2209,7 @@ function updatePomoDisplay() {
   const m = Math.floor(pomoSeconds / 60);
   const s = pomoSeconds % 60;
   document.getElementById('pomo-display').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-  document.getElementById('pomo-phase').textContent =
-    pomoPhase === 'foco' ? 'FOCO' : (pomoPhase === 'pausa-curta' ? 'PAUSA CURTA' : 'PAUSA LONGA');
+  document.getElementById('pomo-phase').textContent = pomoPhase === 'foco' ? 'FOCO' : (pomoPhase === 'pausa-curta' ? 'PAUSA CURTA' : 'PAUSA LONGA');
   document.getElementById('pomo-cycle').textContent = state.pomoCycle;
   document.getElementById('pomo-count').textContent = state.pomodoros;
 }
@@ -2249,8 +2237,7 @@ const musicUrls = {
 function loadMusic(type, ev) {
   const url = musicUrls[type];
   if (!url) return;
-  document.getElementById('yt-player').innerHTML =
-    `<iframe width="100%" height="200" src="${url}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+  document.getElementById('yt-player').innerHTML = `<iframe width="100%" height="200" src="${url}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
   document.querySelectorAll('.music-btn').forEach(b => b.classList.remove('active'));
   if (ev && ev.target) ev.target.classList.add('active');
   toast('🎵 Música carregada!');
@@ -2276,12 +2263,7 @@ function renderMemories() {
     return;
   }
   const discLabels = { portugues:'Português', informatica:'Informática', admpublica:'Adm. Pública', especificos:'Específicos' };
-  list.innerHTML = state.memories.map(m =>
-    `<div class="memory-entry">
-      <div class="timestamp">${m.date} · ${discLabels[m.disc] || m.disc}</div>
-      ${escapeHtml(m.text)}
-    </div>`
-  ).join('');
+  list.innerHTML = state.memories.map(m => `<div class="memory-entry"><div class="timestamp">${m.date} · ${discLabels[m.disc] || m.disc}</div>${escapeHtml(m.text)}</div>`).join('');
 }
 
 function init() {
